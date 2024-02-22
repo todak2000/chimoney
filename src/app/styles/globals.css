@@ -1,0 +1,170 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --foreground-rgb: 0, 0, 0;
+  --background-start-rgb: 214, 219, 220;
+  --background-end-rgb: 255, 255, 255;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --foreground-rgb: 255, 255, 255;
+    --background-start-rgb: 0, 0, 0;
+    --background-end-rgb: 0, 0, 0;
+  }
+}
+
+body {
+  color: rgb(var(--foreground-rgb));
+  background: linear-gradient(
+      to bottom,
+      transparent,
+      rgb(var(--background-end-rgb))
+    )
+    rgb(var(--background-start-rgb));
+}
+
+@layer base {
+  /* Plus Jakarta Sans */
+
+  @font-face {
+    font-family: "Plus";
+    font-style: normal;
+    font-weight: 100 900;
+    font-display: optional;
+    src: url("/fonts/PlusJakartaSans-VariableFont_wght.woff2") format("woff2");
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+      U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212,
+      U+2215, U+FEFF, U+FFFD;
+  }
+
+  /* #region  /**=========== Typography =========== */
+  /* Heading styles */
+  .h0 {
+    @apply font-primary text-[4rem] font-bold;
+  }
+
+  h1,
+  .h1 {
+    @apply font-primary text-[4rem] font-semibold leading-[72px];
+  }
+
+  h2,
+  .h2 {
+    @apply font-primary text-[3rem] font-semibold leading-[56px];
+  }
+
+  h3,
+  .h3 {
+    @apply font-primary text-[2rem] font-semibold leading-[40px];
+  }
+
+  h4,
+  .h4 {
+    @apply font-primary text-[1.5rem] font-semibold leading-[32px];
+  }
+  h5,
+  .h5 {
+    @apply font-primary text-xl font-semibold;
+  }
+
+  /* Bold text styles */
+  .bold-xl {
+    @apply font-primary text-[1.125rem] leading-[26px] font-semibold;
+  }
+  .bold-lg {
+    @apply font-primary text-[1rem] leading-[24px] font-semibold;
+  }
+  .bold-md {
+    @apply font-primary text-[0.875rem] leading-[22px] font-semibold;
+  }
+  .bold-sm {
+    @apply font-primary text-[0.75rem] leading-[16px] font-semibold;
+  }
+  .bold-xs {
+    @apply font-primary text-[0.625rem] leading-[14px] font-semibold;
+  }
+
+  /* Medium text syles */
+  .medium-xl {
+    @apply font-primary text-[1.125rem] leading-[26px] font-medium;
+  }
+  .medium-lg {
+    @apply font-primary text-[1rem] leading-[24px] font-medium;
+  }
+  .medium-md {
+    @apply font-primary text-[0.875rem] leading-[22px] font-medium;
+  }
+  .medium-sm {
+    @apply font-primary text-[0.75rem] leading-[16px] font-medium;
+  }
+  .medium-xs {
+    @apply font-primary text-[0.625rem] leading-[14px] font-medium;
+  }
+
+  /* Medium text syles */
+  .regular-xl {
+    @apply font-primary text-[1.125rem] leading-[26px] font-normal;
+  }
+  .regular-lg {
+    @apply font-primary text-[1rem] leading-[24px] font-normal;
+  }
+  .regular-md {
+    @apply font-primary text-[0.875rem] leading-[22px] font-normal;
+  }
+  .regular-sm {
+    @apply font-primary text-[0.75rem] leading-[16px] font-normal;
+  }
+  .regular-xs {
+    @apply font-primary text-[0.625rem] leading-[14px] font-normal;
+  }
+}
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  /* scroll-behavior */
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Hide scrollbar for IE, Edge and Firefox */
+  .no-scrollbar {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+}
+
+[type="text"]:focus,
+[type="email"]:focus,
+[type="url"]:focus,
+[type="password"]:focus,
+[type="number"]:focus,
+[type="date"]:focus,
+[type="search"]:focus,
+[type="checkbox"]:focus,
+[type="radio"]:focus,
+[multiple]:focus,
+textarea:focus,
+select:focus {
+  --tw-ring-color: transparent;
+  border-color: transparent;
+}
+input:focus,
+textarea:focus {
+  outline: none !important;
+  outline-offset: 0 !important;
+  --tw-ring-offset-width: none !important;
+}
+
+li:focus-visible {
+  outline: none;
+}
+
+li:hover {
+  cursor: pointer;
+}

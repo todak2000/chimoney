@@ -1,0 +1,9 @@
+# *
+User-agent: *
+Allow: /
+
+# Host
+Host: https://dashlytics.vercel.app
+
+# Sitemaps
+Sitemap: https://dashlytics.vercel.app/sitemap.xml
