@@ -52,7 +52,7 @@ const TransactionTable = ({
         ) : (
           <Flex>
             <Title
-              data-testid="order-title"
+              data-testid="title"
               className="text-sm md:bold-xl text-tremor-text-primary dark:invert-0"
             >
               {title}
@@ -79,12 +79,12 @@ const TransactionTable = ({
       <Pagination
         data={transactionData}
         itemsPerPage={10}
-        currentData={data}
+        // currentData={data}
         setCurrentData={setData}
         value={value}
       />
       <Table
-        data-testid="order-table"
+        data-testid="table"
         className="mt-5 overflow-y-auto max-h-[80vh] pb-[20vh] no-scrollbar"
       >
         {loading ? (
@@ -111,10 +111,7 @@ const TransactionTable = ({
                   "Details",
                 ].map((i: string) => {
                   return (
-                    <TableHeaderCell
-                      key={key()}
-                      data-testid="order-table-header"
-                    >
+                    <TableHeaderCell key={key()} data-testid="table-header">
                       {i}
                     </TableHeaderCell>
                   );
@@ -126,7 +123,7 @@ const TransactionTable = ({
                 data?.map(({ description, date, amount, type, wallet }) => (
                   <TableRow
                     key={key()}
-                    data-testid="order-table-row"
+                    data-testid="table-row"
                     className="hover:bg-gray-200"
                   >
                     <TableCell className="flex flex-row items-center medium-lg text-[#3A3F51] dark:invert">

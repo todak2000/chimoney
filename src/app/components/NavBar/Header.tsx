@@ -31,7 +31,7 @@ const Header: NextPage = () => {
 
   return (
     <header className="h-20 border-b-[1px] p-2 md:px-10 pb-4 md:pt-4 border-b-gray-300 flex w-full flex-row justify-between items-center">
-      <Link href={"/"} className="md:w-1/3">
+      <Link href={"/"} className="md:w-1/3" data-testid="logo">
         <FaCirclePlay className="text-tremor-brand-primary text-xl" />
       </Link>
 
@@ -112,6 +112,7 @@ const Header: NextPage = () => {
         </Link>
         <Icon
           icon={IoIosPower}
+          data-testid="logout"
           className="text-red-400 dark:text-red-400 cursor-pointer"
           onClick={() => setOpenModal(true)}
         />

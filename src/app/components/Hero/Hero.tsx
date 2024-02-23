@@ -20,7 +20,7 @@ const Hero = () => {
         {subTitle}
       </p>
       {userr.name !== "" ? null : <Button title="Get started with" />}
-      <HeroBg className="w-full" />
+      <HeroBg className="w-full" data-testid="lottie" />
     </section>
   );
 };

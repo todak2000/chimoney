@@ -187,6 +187,7 @@ const Profile = () => {
                         <input
                           type="text"
                           id={key}
+                          data-testid={key}
                           disabled={(edit && key !== "phone") || !edit}
                           name={key}
                           onChange={handleChange}
