@@ -375,12 +375,8 @@ export const useExchangeRate = () => {
   });
 };
 
-export const useCurrentExchangeRate = (
-  exchangeData: any,
-  exchangePending: boolean
-) => {
-  const queryClient = useQueryClient();
-  queryClient.invalidateQueries({ queryKey: ["exchangeRates"] });
+export const useCurrentExchangeRate = () => {
+  const { data: exchangeData, isPending: exchangePending } = useExchangeRate();
   return useCallback(() => {
     let value: number;
 

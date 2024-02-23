@@ -33,13 +33,7 @@ export default function Home() {
     accountData,
     isPending,
   }: { accountData: AccProps[]; isPending: boolean } = useAccountData();
-
-  const { data: exchangeData, isPending: exchangePending } = useExchangeRate();
-
-  const currentExchangeRate = useCurrentExchangeRate(
-    exchangeData,
-    exchangePending
-  );
+  const currentExchangeRate = useCurrentExchangeRate();
 
   const TransforChartData = useMemo(
     () => transformData(accountData),

@@ -209,9 +209,13 @@ export const isFormLoading = (
 export const maxLengthToUse = (key: string, countryValue: string) => {
   return isReceiverID(key)
     ? 36
-    : key === "accountNumber" && countryValue === "Nigeria"
+    : key === "accountNumber" && countryValue === countryData[0].name
       ? 10
-      : null;
+      : key === "accountNumber" && countryValue === countryData[2].name
+        ? 12
+        : key === "accountNumber" && countryValue === countryData[1].name
+          ? 13
+          : null;
 };
 
 export const optionsToUse = (
