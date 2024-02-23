@@ -69,6 +69,7 @@ export interface SelectModalProps {
   options: PaymentOptionsProps[];
   subHeader: string;
   next: string;
+  currentExchangeRate: () => number;
   accountData?: AccProps[] | null;
   setNext: React.Dispatch<React.SetStateAction<string>>;
   setOpen: Function;
@@ -77,6 +78,8 @@ export interface SelectModalProps {
 export type finalFormDataProps = {
   paymentId: string;
   amount: number;
+  email?: string;
+  link?: string;
   chiRef?: string | null;
   payee?: string | null;
   paymentLink?: string | null;
@@ -113,6 +116,7 @@ export type FormData = {
 export interface FinalModalProps {
   data: finalFormDataProps;
   subHeader: string;
+  currentExchangeRate: () => number;
   backFn: () => void;
 }
 
@@ -120,6 +124,7 @@ export interface FormProps {
   data: FormData;
   schema: any;
   subHeader: string;
+  currentExchangeRate: () => number;
   backFn: () => void;
   loading: boolean;
   userBalance?: { chi: number; momo: number; airtime: number } | null;
@@ -167,3 +172,40 @@ export type StateProps = {
   user: UserProps;
   tabIndex: number;
 };
+
+export interface PaginationProps {
+  data: TransactionsProps[];
+  itemsPerPage: number;
+  currentData: TransactionsProps[];
+  setCurrentData: React.Dispatch<React.SetStateAction<TransactionsProps[]>>;
+  value: string;
+}
+export type ISignup = {
+  name: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  meta: {
+    userId: string; //google uid
+  };
+};
+export interface OptionListProps {
+  options: PaymentOptionsProps[];
+  subHeader: string;
+}
+
+export interface LogoutModalProps {
+  open: boolean;
+  text: string;
+  loading?: boolean;
+  callBack: () => void;
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+}
+export interface ModalWrapperProps {
+  openModal: ModalType;
+  setOpenModal: React.Dispatch<React.SetStateAction<ModalType>>;
+  next: string;
+  currentExchangeRate: () => number;
+  accountData: AccProps[] | null;
+  setNext: React.Dispatch<React.SetStateAction<string>>;
+}

@@ -16,6 +16,9 @@ export const transformData = (accounts: AccProps[]) => {
       const date = moment
         .unix(transaction?.meta?.date?._seconds as number)
         .format("MMM DD YYYY");
+      const dateTime = moment
+        .unix(transaction?.meta?.date?._seconds as number)
+        .format("YYYY-MM-DD HH:mm:ss");
       const balanceKey = account.type.toLocaleUpperCase();
 
       let existingEntry: any = results.find((result) => result?.date === date);
@@ -31,7 +34,7 @@ export const transformData = (accounts: AccProps[]) => {
       }
       transactionResults.push({
         description: transaction.description,
-        date,
+        date: dateTime,
         amount: Math.abs(transaction.amount),
         type:
           transaction?.newBalance &&
@@ -107,9 +110,9 @@ export const generateChartData = (count: number) => {
   const data: any[] = [];
   for (let i: number = 0; i < count; i += 1) {
     data.push({
-      AIRTIME: faker.number.int({ min: 99, max: 999 }),
-      CHI: faker.number.int({ min: 99, max: 999 }),
-      MOMO: faker.number.int({ min: 99, max: 999 }),
+      AIRTIME: 0,
+      CHI: 0,
+      MOMO: 0,
       date: formatedDatePast(),
     });
   }

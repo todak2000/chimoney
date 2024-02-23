@@ -13,21 +13,15 @@ import { Icon } from "@tremor/react";
 import {
   AccProps,
   ModalType,
+  ModalWrapperProps,
   PaymentOptionsProps,
 } from "@/app/constants/types";
-
-interface ModalWrapperProps {
-  openModal: ModalType;
-  setOpenModal: React.Dispatch<React.SetStateAction<ModalType>>;
-  next: string;
-  accountData: AccProps[] | null;
-  setNext: React.Dispatch<React.SetStateAction<string>>;
-}
 
 const ModalWrapper = ({
   openModal,
   setOpenModal,
   next,
+  currentExchangeRate,
   setNext,
   accountData,
 }: ModalWrapperProps) => {
@@ -178,6 +172,7 @@ const ModalWrapper = ({
         options={config.options}
         type={config.type}
         next={next}
+        currentExchangeRate={currentExchangeRate}
         setNext={setNext}
         subHeader={config.subHeader}
         accountData={config.accountData}

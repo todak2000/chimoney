@@ -1,12 +1,7 @@
 import { releaseText } from "@/app/constants/modal";
-import { PaymentOptionsProps } from "@/app/constants/types";
-import { key } from "@/app/lib/uniqueKey";
+import { OptionListProps, PaymentOptionsProps } from "@/app/constants/types";
 import React from "react";
 
-interface OptionListProps {
-  options: PaymentOptionsProps[];
-  subHeader: string;
-}
 const OptionList = ({ options, subHeader }: OptionListProps) => {
   return (
     <div className="p-4 md:p-5">

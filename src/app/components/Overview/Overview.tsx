@@ -24,6 +24,7 @@ import {
   OverviewProps,
 } from "@/app/constants/types";
 import { user } from "@/app/store";
+import { cn } from "@/app/lib/cn";
 
 const Overview = ({
   accountData,
@@ -39,6 +40,7 @@ const Overview = ({
     chi: {
       name: "Chi Balance",
       icon: TbPigMoney,
+      color: "cyan",
     },
     momo: {
       name: "MoMo",
@@ -47,6 +49,7 @@ const Overview = ({
     airtime: {
       name: "Airtime",
       icon: GiCash,
+      color: "rose",
     },
   };
   const buttonArr: ButtArrProps[] = [
@@ -107,12 +110,13 @@ const Overview = ({
                 accountData?.length > 0 &&
                 !isPending &&
                 accountData?.map((acc: AccProps) => {
+                  const lastTransaction =
+                    acc?.transactions?.[acc?.transactions?.length - 1];
                   const trendIsUp: boolean =
-                    (acc?.transactions &&
-                      acc?.transactions[0]?.newBalance &&
-                      acc?.transactions[0]?.balanceBefore &&
-                      acc?.transactions[0]?.newBalance >=
-                        acc?.transactions[0]?.balanceBefore) ||
+                    (lastTransaction?.newBalance &&
+                      lastTransaction?.balanceBefore &&
+                      lastTransaction?.newBalance >=
+                        lastTransaction?.balanceBefore) ||
                     false;
                   const accName: string = accountTypes[acc?.type]?.name;
                   const accIcon: ReactElement = (
@@ -121,7 +125,14 @@ const Overview = ({
                       tooltip={accName}
                       size="md"
                       icon={accountTypes[acc?.type]?.icon}
-                      className="text-tremor-brand-primary  dark:text-white text-2xl"
+                      className={cn(" dark:text-white text-2xl ", {
+                        "text-indigo-500 ":
+                          accountTypes[acc?.type]?.color === "indigo",
+                        "text-cyan-500":
+                          accountTypes[acc?.type]?.color === "cyan",
+                        "text-rose-500":
+                          accountTypes[acc?.type]?.color === "rose",
+                      })}
                     />
                   );
 
@@ -213,6 +224,7 @@ const Overview = ({
         openModal={openModal}
         setOpenModal={setOpenModal}
         next={next}
+        currentExchangeRate={currentExchangeRate}
         setNext={setNext}
         accountData={accountData}
       />

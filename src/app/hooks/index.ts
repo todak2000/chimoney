@@ -1,4 +1,4 @@
-import { clearUser, setIsLoading, setUser, user } from "@/app/store";
+import { clearUser, isLoading, setIsLoading, setUser, user } from "@/app/store";
 import { auth } from "@/firebase";
 import { useRouter } from "next/navigation";
 import { useEffect, useCallback, useState, useMemo } from "react";
@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   createPaymentLink,
+  deleteAccountDetails,
   getAccountDetails,
   getBanksDetails,
   getBranchCodes,
@@ -21,6 +22,8 @@ import { AccProps } from "@/app/constants/types";
 
 // get user Details
 export const useGetUserChimoneyDetails = (id: string) => {
+  const queryClient = useQueryClient();
+  queryClient.invalidateQueries({ queryKey: ["userDetails"] });
   return useQuery({
     queryKey: ["userDetails"],
     queryFn: async () => getAccountDetails(id),
@@ -38,20 +41,28 @@ export const useAuthStateChange = () => {
     const unsubscribe = auth.onAuthStateChanged(async (firebaseUser) => {
       if (firebaseUser && (userr?.name === "" || !userr?.accountNo)) {
         dispatch(setIsLoading(true));
-        const accNo = await getAccountId(firebaseUser?.uid); //from firebase
-        const userData = {
-          name: firebaseUser?.displayName as string,
-          email: firebaseUser?.email as string,
-          photo: firebaseUser?.photoURL as string,
-          uid: firebaseUser?.uid,
-          accountNo: accNo as string,
-          phone: "",
-        };
-
-        dispatch(setUser(userData));
-        dispatch(setIsLoading(false));
+        const fbDetails = await getAccountId(firebaseUser?.uid); //from firebase
+        if (fbDetails) {
+          const userData = {
+            name: firebaseUser?.displayName as string,
+            email: firebaseUser?.email as string,
+            photo: firebaseUser?.photoURL as string,
+            uid: firebaseUser?.uid,
+            accountNo: fbDetails?.accountNo,
+            phone: fbDetails?.phone,
+          };
+          setTimeout(() => {
+            dispatch(setUser(userData));
+            dispatch(setIsLoading(false));
+          }, 2000);
+        } else {
+          dispatch(clearUser());
+          dispatch(setIsLoading(false));
+          push("/");
+        }
       } else if (!firebaseUser) {
         dispatch(clearUser());
+        dispatch(setIsLoading(false));
         push("/");
       }
     });
@@ -83,16 +94,18 @@ export const useSignOut = () => {
 export const useAccountData = () => {
   const [accountData, setAccountData] = useState<AccProps[]>([]);
   const [phone, setPhone] = useState<string>("");
+  const dispatch = useDispatch();
   const userr = useSelector(user);
+  const isLoadingg = useSelector(isLoading);
   const { isPending, data, error, isSuccess, isError } =
-    useGetUserChimoneyDetails(userr?.accountNo);
+    useGetUserChimoneyDetails(userr.accountNo);
 
   const handleSuccess = useCallback(() => {
     if (isSuccess) {
       setAccountData(data?.data?.wallets);
       setPhone(data?.data?.phone);
     }
-  }, [isSuccess, data]);
+  }, [isSuccess, data, isLoadingg, dispatch, userr]);
 
   const handleError = useCallback(() => {
     if (isError || error) {
@@ -103,7 +116,14 @@ export const useAccountData = () => {
   useEffect(() => {
     handleSuccess();
     handleError();
-  }, [handleSuccess, handleError]);
+  }, [
+    handleSuccess,
+    handleError,
+    useGetUserChimoneyDetails,
+    dispatch,
+    isLoadingg,
+    userr,
+  ]);
 
   return { accountData, isPending, phone };
 };
@@ -375,14 +395,37 @@ export const useCurrentExchangeRate = (
 
 export const useUpdateAccountDetails = () => {
   const mutation = useMutation({
-    mutationFn: (data: { id: string; phone: string }) =>
+    mutationFn: (data: { id: string; phone: string; fbuid: string }) =>
       updateAccountDetails(data),
   });
 
   const { mutate, isError, data, isSuccess, error, isPending } = mutation;
 
   return {
-    updateAccountDetails: (data: { id: string; phone: string }) => mutate(data),
+    updateAccountDetails: (data: {
+      id: string;
+      phone: string;
+      fbuid: string;
+    }) => mutate(data),
+    isError,
+    isSuccess,
+    isPending,
+    error,
+    data,
+  };
+};
+
+//
+export const useDeleteAccountDetails = () => {
+  const mutation = useMutation({
+    mutationFn: (data: { id: string; fbuid: string }) =>
+      deleteAccountDetails(data),
+  });
+
+  const { mutate, isError, data, isSuccess, error, isPending } = mutation;
+
+  return {
+    deleteAccountDetails: (data: { id: string; fbuid: string }) => mutate(data),
     isError,
     isSuccess,
     isPending,
