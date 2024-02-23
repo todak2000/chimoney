@@ -6,7 +6,7 @@
 
 ## URL
 
-https://chimoney.vercel.app
+https://chimoney-pi.vercel.app/
 
 ## Built with
 

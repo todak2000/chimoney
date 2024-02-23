@@ -1,14 +1,16 @@
 "use client";
 import React from "react";
 import { cn } from "@/app/lib/cn";
+import Loader from "../loader/Loader";
+import { LogoutModalProps } from "@/app/constants/types";
 
-interface LogoutModalProps {
-  open: boolean;
-  text: string;
-  callBack: () => void;
-  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-}
-const LogOutModal = ({ open, setOpen, text, callBack }: LogoutModalProps) => {
+const LogOutModal = ({
+  open,
+  setOpen,
+  text,
+  callBack,
+  loading,
+}: LogoutModalProps) => {
   return (
     <div
       tabIndex={-1}
@@ -61,16 +63,17 @@ const LogOutModal = ({ open, setOpen, text, callBack }: LogoutModalProps) => {
                 d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
               />
             </svg>
-            <h3 className="mb-5 text-lg font-normal text-black dark:text-gray-400">
+            <h3 className="mb-5 text-sm md:text-lg font-normal text-black dark:text-gray-400">
               {text}
             </h3>
             <button
               data-modal-hide="popup-modal"
               type="button"
+              disabled={loading}
               onClick={callBack}
               className="text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center"
             >
-              Yes, I'm sure
+              {loading ? <Loader /> : "Yes, I'm sure"}
             </button>
             <button
               data-modal-hide="popup-modal"

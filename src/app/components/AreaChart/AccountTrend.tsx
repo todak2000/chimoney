@@ -11,9 +11,7 @@ const AccountTrend = ({ data }: ButtonProps) => {
   return (
     <AreaChart
       className="mt-4 sm:h-72 h-40"
-      data={
-        data && data?.length > 2 ? data : [...generateChartData(10), ...data]
-      }
+      data={[...generateChartData(5), ...data]}
       index="date"
       showAnimation
       showGridLines={false}
@@ -28,4 +26,4 @@ const AccountTrend = ({ data }: ButtonProps) => {
   );
 };
 
-export default React.memo(AccountTrend);
+export default AccountTrend;

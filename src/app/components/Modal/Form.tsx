@@ -3,6 +3,8 @@ import { IoIosArrowRoundBack } from "react-icons/io";
 import { Formik, Field, Form, ErrorMessage, FieldProps } from "formik";
 import Loader from "@/app/components/loader/Loader";
 import {
+  useCurrentExchangeRate,
+  useExchangeRate,
   useGetBanksDetails,
   useGetBranchCodes,
   useGetUserChimoneyDetails1,
@@ -32,7 +34,7 @@ import {
   showFullNameComponentNG,
   valueToUse,
 } from "@/app/constants/modal";
-import { onSubmit } from "@/app/lib/others";
+import { getKeyName, onSubmit } from "@/app/lib/others";
 
 const SelectInput = ({ field, form, options, onSelect }: SelectInputProps) => {
   const [selectedValue, setSelectedValue] = useState<string>("");
@@ -68,29 +70,52 @@ const SelectInput = ({ field, form, options, onSelect }: SelectInputProps) => {
 const CurrencyInput = ({ field, form }: FieldProps) => {
   const [keyState, setKeyState] = useState<boolean>(true);
   const [originalValue, setOriginalValue] = useState<string>("");
+  const userr = useSelector(user);
+  const { data: exchangeData, isPending: exchangePending } = useExchangeRate();
 
-  const value = new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-  }).format(field.value);
+  const currentExchangeRate = useCurrentExchangeRate(
+    exchangeData,
+    exchangePending
+  );
+
+  const value =
+    userr.prefferedCurrency === "USD"
+      ? new Intl.NumberFormat("en-US", {
+          style: "currency",
+          currency: "USD",
+        }).format(field.value)
+      : new Intl.NumberFormat("en-US", {
+          style: "currency",
+          currency: "NGN",
+        }).format(field.value);
 
   return (
-    <input
-      {...field}
-      value={keyState ? originalValue : value}
-      onKeyUp={() =>
-        setTimeout(() => {
-          setKeyState(false);
-        }, 1500)
-      }
-      onKeyDown={() => setKeyState(true)}
-      onChange={(e) => {
-        const number = Number(e.target.value.replace(/[^0-9.-]+/g, ""));
-        setOriginalValue(number?.toString());
-        form.setFieldValue(field.name, number);
-      }}
-      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-    />
+    <>
+      <input
+        {...field}
+        value={keyState ? originalValue : value}
+        onKeyUp={() =>
+          setTimeout(() => {
+            setKeyState(false);
+          }, 1500)
+        }
+        onKeyDown={() => setKeyState(true)}
+        onChange={(e) => {
+          const number = Number(e.target.value.replace(/[^0-9.-]+/g, ""));
+          setOriginalValue(number?.toString());
+          form.setFieldValue(field.name, number);
+        }}
+        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+      />
+      {field.value !== "" && userr.prefferedCurrency !== "USD" && (
+        <span className="text-tremor-brand-primary text-xs ">
+          {new Intl.NumberFormat("en-US", {
+            style: "currency",
+            currency: "USD",
+          }).format(field.value / currentExchangeRate())}
+        </span>
+      )}
+    </>
   );
 };
 
@@ -98,6 +123,7 @@ const ModalForm = ({
   data,
   subHeader,
   backFn,
+  currentExchangeRate,
   schema,
   loading,
   submitFn,
@@ -176,6 +202,7 @@ const ModalForm = ({
             submitFn,
             setEmail,
             setName,
+            currentExchangeRate,
             setBanks,
             setBranches
           );
@@ -210,7 +237,7 @@ const ModalForm = ({
                         htmlFor={key}
                         className="capitalize block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                       >
-                        {key}
+                        {getKeyName(key, userr)}
                       </label>
                       <Field
                         id={key}
@@ -285,9 +312,8 @@ const ModalForm = ({
                   <span>
                     {subHeader.includes("Send Fund") ? (
                       <SendFundMessage
+                        currency={userr.prefferedCurrency as string}
                         amountValue={values?.amount as string}
-                        name={name}
-                        emailValue={email}
                       />
                     ) : (
                       "Create Link"
@@ -303,4 +329,4 @@ const ModalForm = ({
   );
 };
 
-export default React.memo(ModalForm);
+export default ModalForm;

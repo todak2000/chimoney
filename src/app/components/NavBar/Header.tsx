@@ -5,13 +5,12 @@ import { FaCirclePlay } from "react-icons/fa6";
 import { key } from "@/app/lib/uniqueKey";
 import { useDispatch, useSelector } from "react-redux";
 import { setTabIndex, tabIndex, updateCurrency, user } from "@/app/store";
-import { Icon, Tab, TabGroup, TabList, Switch } from "@tremor/react";
+import { Icon, Switch } from "@tremor/react";
 import Image from "next/image";
 import { IoIosPower } from "react-icons/io";
 import { useSignOut } from "@/app/hooks";
 import LogOutModal from "@/app/components/Modal/LogOutModal";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { cn } from "@/app/lib/cn";
 const Header: NextPage = () => {
   const dispatch = useDispatch();
@@ -31,40 +30,39 @@ const Header: NextPage = () => {
   };
 
   return (
-    <header className="h-20 border-b-[1px] px-10 pb-4 md:pt-4 border-b-gray-300 flex w-full flex-row justify-between items-center">
-      <Link href={"/"} className="w-1/3">
+    <header className="h-20 border-b-[1px] p-2 md:px-10 pb-4 md:pt-4 border-b-gray-300 flex w-full flex-row justify-between items-center">
+      <Link href={"/"} className="md:w-1/3">
         <FaCirclePlay className="text-tremor-brand-primary text-xl" />
       </Link>
 
-      <div className="justify-center flex flex-row w-1/3">
-        <ul className="flex flex-wrap -mb-px text-sm font-medium text-center text-gray-500 dark:text-gray-400">
+      <div className="justify-center flex flex-row md:w-1/3">
+        <ul className="flex  -mb-px text-sm font-medium text-center text-gray-500 dark:text-gray-400">
           {arr.map((text: string, index: number) => {
             return (
-              <li className="me-2">
-                <a
-                  href="#"
+              <li className="me-2" key={key()}>
+                <button
                   onClick={() => dispatch(setTabIndex(index))}
                   className={cn({
-                    "inline-flex items-center justify-center p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300 group":
+                    "inline-flex items-center justify-center py-1 px-2 md:px-4 border-transparent rounded-full hover:text-gray-600 hover:border-text-tremor-brand-primary dark:hover:text-gray-300 group text-xs md:text-sm":
                       tabIndexx !== index,
-                    "inline-flex items-center justify-center p-4 text-tremor-brand-primary border-b-2 border-tremor-brand-primary rounded-t-lg active dark:text-tremor-brand-primary dark:border-tremor-brand-primary group":
+                    "inline-flex items-center justify-center py-1 md:px-4 px-2 rounded-full text-tremor-brand-secondary hover:bg-tremor-brand-secondary hover:text-tremor-brand-primary bg-tremor-brand-primary group text-xs md:text-sm":
                       tabIndexx === index,
                   })}
                 >
                   {text}
-                </a>
+                </button>
               </li>
             );
           })}
         </ul>
       </div>
 
-      <section className="flex flex-row items-center w-1/3 justify-end">
+      <section className="flex flex-row items-center md:w-1/3 justify-end">
         <label
           className={cn(
             "hidden md:inline-flex items-center me-5 cursor-pointer",
             {
-              "md:hidden": tabIndexx === 1,
+              "md:hidden": tabIndexx === 1 || tabIndexx == 2,
             }
           )}
         >

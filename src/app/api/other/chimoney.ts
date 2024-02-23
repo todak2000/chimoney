@@ -1,6 +1,6 @@
 import { PaymentLinkProps } from "@/app/constants/types";
 import { httpRequest } from "@/app/lib/httpRequest";
-
+import { handleDeleteUser, handlePhoneNumber } from "@/app/api/auth";
 export const baseURL = `${process.env.NEXT_PUBLIC_CHIMONEY_URL}/v0.2`;
 
 export const getAccountDetails = async (id: string) => {
@@ -41,6 +41,7 @@ export const sendP2P = async (data: {
 export const updateAccountDetails = async (data: {
   id: string;
   phone: string;
+  fbuid: string;
 }) => {
   const payload = {
     meta: {
@@ -49,7 +50,44 @@ export const updateAccountDetails = async (data: {
     phoneNumber: data.phone,
     id: data.id,
   };
-  return httpRequest(`${baseURL}/sub-account/update`, "POST", payload);
+
+  // Call updateUserPhoneNumber and httpRequest simultaneously
+  const [phoneUpdateResult, httpRequestResult] = await Promise.all([
+    handlePhoneNumber({ userId: data.fbuid, phone: data.phone }),
+    httpRequest(`${baseURL}/sub-account/update`, "POST", payload),
+  ]);
+
+  // Merge the results
+  const result = {
+    status:
+      phoneUpdateResult.status === 200 && httpRequestResult.status === "success"
+        ? 200
+        : 409,
+    phone: phoneUpdateResult.phone,
+  };
+  return result;
+};
+
+// handleDeleteUser
+export const deleteAccountDetails = async (data: {
+  id: string;
+  fbuid: string;
+}) => {
+  // Call updateUserPhoneNumber and httpRequest simultaneously
+  const [deleteResult, httpRequestResult] = await Promise.all([
+    handleDeleteUser(data.fbuid),
+    httpRequest(`${baseURL}/sub-account/delete?id=${data.id}`, "DELETE"),
+  ]);
+
+  // Merge the results
+  const result = {
+    status: httpRequestResult.status === "success" ? 200 : 409,
+    message:
+      httpRequestResult.status === "success"
+        ? "Your account has been successfully deleted. We’re sorry to see you go and hope to see you again in the future. Take care! 😔"
+        : "Oops! an error occured",
+  };
+  return result;
 };
 export const createPaymentLink = async (data: {
   amount: number;

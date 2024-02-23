@@ -3,7 +3,7 @@ User-agent: *
 Allow: /
 
 # Host
-Host: https://dashlytics.vercel.app
+Host: https://chimoney-pi.vercel.app
 
 # Sitemaps
-Sitemap: https://dashlytics.vercel.app/sitemap.xml
+Sitemap: https://chimoney-pi.vercel.app/sitemap.xml

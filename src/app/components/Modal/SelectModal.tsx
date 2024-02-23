@@ -37,6 +37,7 @@ const SelectModal = ({
   header,
   next,
   setNext,
+  currentExchangeRate,
   subHeader,
   accountData,
 }: SelectModalProps) => {
@@ -85,9 +86,13 @@ const SelectModal = ({
       data: {
         id: string;
         valueInUSD: number;
+        email: string;
         data: {
           id: string;
           valueInUSD: number;
+          email: string;
+          receiver: string;
+          redeemLink: string;
         }[];
         chiRef: string;
         payerEmail: string;
@@ -110,6 +115,8 @@ const SelectModal = ({
         : {
             paymentId: data.data.data[0]?.id,
             amount: data.data.data[0]?.valueInUSD,
+            email: data.data?.data[0]?.email || data.data?.data[0]?.receiver,
+            link: data.data?.data[0]?.redeemLink,
           };
 
       if (type === "card") {
@@ -121,8 +128,8 @@ const SelectModal = ({
           chiRef: data.data.chiRef,
           payee: data.data.payerEmail,
           paymentLink: data.data.paymentLink,
-          paymentStatus: data.data.status,
-          paymentRef: data.data.paymentRef,
+          // paymentStatus: data.data.status,
+          // paymentRef: data.data.paymentRef,
         };
       }
 
@@ -203,6 +210,7 @@ const SelectModal = ({
           <Form
             data={getFormData(next)}
             userBalance={userBalance}
+            currentExchangeRate={currentExchangeRate}
             subHeader={getSubHeader(next)}
             backFn={() => setNext("")}
             schema={getSchema(next)}
@@ -217,6 +225,7 @@ const SelectModal = ({
         return (
           <FinalForm
             data={finalResultData as finalFormDataProps}
+            currentExchangeRate={currentExchangeRate}
             subHeader={
               next === "final-link" ? "Payment Link" : "Payment Successful"
             }

@@ -25,7 +25,6 @@ const UserSlice = createSlice({
       state: UserProps,
       action: PayloadAction<Omit<UserProps, "prefferedCurrency">>
     ) => {
-      console.log(action.payload, "payload");
       return {
         ...action.payload,
         prefferedCurrency: state.prefferedCurrency,
@@ -39,6 +38,13 @@ const UserSlice = createSlice({
       action: PayloadAction<"USD" | "NGN">
     ) => {
       return { ...state, prefferedCurrency: action.payload };
+    },
+    updateUserKey: (
+      state: UserProps,
+      action: PayloadAction<{ key: keyof UserProps; value: any }>
+    ) => {
+      const { key, value } = action.payload;
+      return { ...state, [key]: value };
     },
   },
 });
@@ -64,7 +70,8 @@ const TabSlice = createSlice({
     },
   },
 });
-export const { setUser, clearUser, updateCurrency } = UserSlice.actions;
+export const { setUser, clearUser, updateCurrency, updateUserKey } =
+  UserSlice.actions;
 export const { setIsLoading } = LoaderSlice.actions;
 export const { setTabIndex } = TabSlice.actions;
 

@@ -1,7 +1,10 @@
 import { SelectInputProps } from "@/app/constants/types";
 import { BankSchema, LinkSchema, SendSchema } from "@/app/constants/validation";
 import { cn } from "@/app/lib/cn";
-import { currencyFormatter } from "@/app/lib/currencyFormater";
+import {
+  currencyFormater,
+  currencyFormatter,
+} from "@/app/lib/currencyFormater";
 import { faker } from "@faker-js/faker";
 import { FieldProps } from "formik";
 import React from "react";
@@ -166,7 +169,8 @@ export const valueToUse = (
 
 export const showBranchCodeComponent = (key: string, countryValue: string) => {
   return (
-    key === "branchCode" && (countryValue === "" || countryValue === "Nigeria")
+    (key === "branchCode" && countryValue === "") ||
+    (key === "branchCode" && countryValue === "Nigeria")
   );
 };
 export const showFullNameComponent = (
@@ -263,20 +267,22 @@ export const classNameToUse = (key: string, subHeader: string) => {
 };
 
 export const recipientName = (name: string, emailValue: string) => {
-  return name?.split(" ")[0] || emailValue?.split("@")[0];
+  const emailPrefix = emailValue?.split("@")[0];
+  const shortEmailPrefix =
+    emailPrefix?.length > 15 ? emailPrefix?.slice(0, 15) + "...@" : emailPrefix;
+  return name?.split(" ")[0] || shortEmailPrefix;
 };
+
 export const formattedAmount = (amountValue: number) => {
   return currencyFormatter.format(amountValue);
 };
 
 export const SendFundMessage = ({
   amountValue,
-  name,
-  emailValue,
+  currency,
 }: {
   amountValue: string;
-  name: string;
-  emailValue: string;
+  currency: string;
 }) => {
   return (
     <>
@@ -284,13 +290,14 @@ export const SendFundMessage = ({
       {amountValue === "" ? (
         "Fund"
       ) : (
-        <>
-          <span className="inline-flex items-center justify-center px-4 py-2 ms-2 mr-2 text-xs font-semibold text-tremor-brand-primary bg-blue-200 rounded-full">
-            {formattedAmount(Number(amountValue))}
-          </span>{" "}
-          to {recipientName(name, emailValue)}
-        </>
+        <span className="inline-flex items-center justify-center px-4 py-2 ms-2 mr-2 text-xs font-semibold text-tremor-brand-primary bg-blue-200 rounded-full">
+          {currencyFormater(Number(amountValue), currency)}
+        </span>
       )}
     </>
   );
+};
+
+export const isCopyClickable = (key: string, phoneValue: string) => {
+  return key === "accountNo" || (key === "phone" && phoneValue !== "");
 };

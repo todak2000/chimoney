@@ -16,13 +16,14 @@ import {
 } from "@tremor/react";
 import { FaCirclePlay } from "react-icons/fa6";
 import { IoDocumentText } from "react-icons/io5";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { cn } from "../../lib/cn";
 import { currencyFormater } from "../../lib/currencyFormater";
 import { useSelector } from "react-redux";
 import SkeletonLoader from "../SkeletonLoader";
 import { TransactionViewProps, TransactionsProps } from "@/app/constants/types";
 import { user } from "@/app/store";
+import Pagination from "./Pagination";
 const TransactionTable = ({
   transactionData,
   isPending: loading,
@@ -30,17 +31,7 @@ const TransactionTable = ({
   const title = "Latest Transactions";
   const options = ["CHI", "MOMO", "AIRTIME", "Debit", "Credit", "All"];
   const [value, setValue] = useState("");
-  const [data, setData] = useState<TransactionsProps[]>(transactionData);
-
-  useEffect(() => {
-    if (["CHI", "MOMO", "AIRTIME"].includes(value)) {
-      setData(transactionData.filter(({ wallet }) => wallet === value));
-    } else if (["Debit", "Credit"].includes(value)) {
-      setData(transactionData.filter(({ type }) => type === value));
-    } else {
-      setData(transactionData);
-    }
-  }, [value]);
+  const [data, setData] = useState<TransactionsProps[]>([]);
 
   const userr = useSelector(user);
   return (
@@ -84,6 +75,13 @@ const TransactionTable = ({
           </Flex>
         )}
       </span>
+      <Pagination
+        data={transactionData}
+        itemsPerPage={10}
+        currentData={data}
+        setCurrentData={setData}
+        value={value}
+      />
       <Table
         data-testid="order-table"
         className="mt-5 overflow-y-auto max-h-[80vh] pb-[20vh] no-scrollbar"
