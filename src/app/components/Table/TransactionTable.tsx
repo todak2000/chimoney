@@ -24,6 +24,7 @@ import SkeletonLoader from "../SkeletonLoader";
 import { TransactionViewProps, TransactionsProps } from "@/app/constants/types";
 import { user } from "@/app/store";
 import Pagination from "./Pagination";
+import { comingSoonToast } from "@/app/lib/toast";
 const TransactionTable = ({
   transactionData,
   isPending: loading,
@@ -121,8 +122,7 @@ const TransactionTable = ({
               </TableRow>
             </TableHead>
             <TableBody>
-              {transactionData &&
-                transactionData?.length > 0 &&
+              {data?.length > 0 &&
                 data?.map(({ description, date, amount, type, wallet }) => (
                   <TableRow
                     key={key()}
@@ -155,10 +155,13 @@ const TransactionTable = ({
                       <Text> {wallet}</Text>
                     </TableCell>
                     <TableCell className="regular-md  text-tremor-brand-hover dark:invert">
-                      <span className="flex flex-row items-center cursor-pointer">
+                      <button
+                        onClick={comingSoonToast}
+                        className="flex flex-row items-center cursor-pointer"
+                      >
                         <IoDocumentText className="mx-1  size-4" />
                         <Text>{`View`}</Text>
-                      </span>
+                      </button>
                     </TableCell>
                   </TableRow>
                 ))}

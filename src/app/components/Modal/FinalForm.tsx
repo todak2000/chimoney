@@ -2,10 +2,7 @@ import React from "react";
 import { IoIosArrowRoundBack } from "react-icons/io";
 import { AiTwotoneCopy } from "react-icons/ai";
 
-import {
-  currencyFormater,
-  currencyFormatter,
-} from "@/app/lib/currencyFormater";
+import { currencyFormater } from "@/app/lib/currencyFormater";
 import { FinalModalProps } from "@/app/constants/types";
 import { copyToClipboard, getKeyName } from "@/app/lib/others";
 import { useSelector } from "react-redux";

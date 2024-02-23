@@ -43,15 +43,10 @@ export const ChimoneyToast = {
   },
 
   warn: ({ msg, position = ToastPosition.TOPRIGHT }: ToastProps) => {
-    const toastId = toast.custom(msg, {
-      position,
+    const toastId = toast.error(msg, {
       duration: 6000,
-      style: {
-        backgroundColor: "white",
-        fontSize: "15px",
-        color: "yellow",
-      },
-      className: "bg-primary-60 text-neutral white",
+      position,
+      ...mtToastStyle,
     });
     return toastId;
   },
@@ -72,6 +67,12 @@ export const showToastError = (msg: string) => {
 export const showToastSuccess = (msg: string) => {
   const toastId = ChimoneyToast.success({
     msg: msg,
+  });
+  setTimeout(() => ChimoneyToast.dismiss(toastId), milliSeconds);
+};
+export const comingSoonToast = () => {
+  const toastId = ChimoneyToast.warn({
+    msg: "Stay tuned! This exciting feature is currently under development and will be available soon. 🚧🔨👷‍♀️",
   });
   setTimeout(() => ChimoneyToast.dismiss(toastId), milliSeconds);
 };

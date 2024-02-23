@@ -21,7 +21,7 @@ const Button = ({ title }: GoogleButtonProps) => {
       showToastSuccess(res.message);
       push("/dashboard");
     } else {
-      showToastError(res.message as string);
+      showToastError(res.message);
     }
   };
   return (

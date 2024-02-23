@@ -28,12 +28,18 @@ export const BankSchema = Yup.object().shape({
   bank: Yup.string().required("Bank is required!"),
   accountNumber: Yup.string()
     .required("Account Number is required!")
+    .min(10, "Account Number cannot be less than 10 digits")
+    .max(13, "Account Number cannot be more than 13 digits")
     .test(
       "countries",
       "Account Number must be exactly 10 digits for Nigeria",
       function (value) {
         const { country } = this.parent;
-        return value ? (country === "NG" ? value.length === 10 : true) : false;
+        return value
+          ? country === "Nigeria"
+            ? value.length === 10
+            : true
+          : false;
       }
     ),
 });

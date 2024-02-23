@@ -4,7 +4,6 @@ import { Formik, Field, Form, ErrorMessage, FieldProps } from "formik";
 import Loader from "@/app/components/loader/Loader";
 import {
   useCurrentExchangeRate,
-  useExchangeRate,
   useGetBanksDetails,
   useGetBranchCodes,
   useGetUserChimoneyDetails1,
@@ -60,7 +59,7 @@ const SelectInput = ({ field, form, options, onSelect }: SelectInputProps) => {
       <option>Select</option>
       {options?.map((option) => (
         <option key={option.code} value={option.code}>
-          {option.name} {option.flag ? option.flag : null}
+          {option.name}
         </option>
       ))}
     </select>
@@ -71,12 +70,7 @@ const CurrencyInput = ({ field, form }: FieldProps) => {
   const [keyState, setKeyState] = useState<boolean>(true);
   const [originalValue, setOriginalValue] = useState<string>("");
   const userr = useSelector(user);
-  const { data: exchangeData, isPending: exchangePending } = useExchangeRate();
-
-  const currentExchangeRate = useCurrentExchangeRate(
-    exchangeData,
-    exchangePending
-  );
+  const currentExchangeRate = useCurrentExchangeRate();
 
   const value =
     userr.prefferedCurrency === "USD"

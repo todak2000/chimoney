@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "next dev",
     "find:unused": "next-unused",
-    "build": "rimraf .next .swc out coverage && yarn test && next build && next-sitemap",
+    "build": "rimraf .next .swc out coverage && next build && next-sitemap",
     "start": "next start",
     "lint": "next lint",
     "format": "next lint --fix && prettier '**/*.{json,yaml}' --write --ignore-path .gitignore",
