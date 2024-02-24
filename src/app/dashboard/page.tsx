@@ -1,38 +1,22 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 "use client";
-import { useEffect, useMemo } from "react";
-import { useDispatch, useSelector } from "react-redux";
-
-import { ChimoneyToast } from "@/app/lib/toast";
-
-import { setIsLoading, tabIndex, user } from "@/app/store";
+import { useMemo } from "react";
+import { useSelector } from "react-redux";
+import { accountDataa, tabIndex, user } from "@/app/store";
 import { Flex } from "@tremor/react";
 import Overview from "@/app/components/Overview/Overview";
-import {
-  useAccountData,
-  useCurrentExchangeRate,
-  useExchangeRate,
-} from "@/app/hooks";
+import { useAccountData, useCurrentExchangeRate } from "@/app/hooks";
 import { transformData, transformDataNGN } from "@/app/lib/chartFormatter";
 import TransactionTable from "@/app/components/Table/TransactionTable";
-import { AccProps } from "@/app/constants/types";
 import Profile from "@/app/components/Profile/Profile";
 
 export default function Home() {
-  const dispatch = useDispatch();
   const tabIndexx = useSelector(tabIndex);
   const userr = useSelector(user);
-  useEffect(() => {
-    ChimoneyToast.dismiss();
-    setTimeout(() => {
-      dispatch(setIsLoading(false));
-    }, 900);
-  }, []);
+  const accountData = useSelector(accountDataa);
 
-  const {
-    accountData,
-    isPending,
-  }: { accountData: AccProps[]; isPending: boolean } = useAccountData();
+  const { isPending } = useAccountData();
+
   const currentExchangeRate = useCurrentExchangeRate();
 
   const TransforChartData = useMemo(

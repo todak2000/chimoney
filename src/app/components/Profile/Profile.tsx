@@ -135,7 +135,7 @@ const Profile = () => {
             name: userr.name,
             email: userr.email,
             accountNo: userr.accountNo,
-            phone: userr.phone ? userr.phone : "",
+            phone: "",
           }}
           onSubmit={async (values, { resetForm }) => {
             setTimeout(() => {
@@ -192,7 +192,11 @@ const Profile = () => {
                           name={key}
                           onChange={handleChange}
                           maxLength={key === "phone" ? 15 : 99}
-                          value={(values as FormikValues)[key]}
+                          value={
+                            key === "phone" && !edit
+                              ? userr.phone
+                              : (values as FormikValues)[key]
+                          }
                           className={cn(
                             "rounded-none rounded-e-lg  border text-gray-900 focus:ring-tremor-brand-primary focus:border-tremor-brand-primary block flex-1 min-w-0 w-full text-sm border-gray-300 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-tremor-brand-primary dark:focus:border-tremor-brand-primary",
                             {

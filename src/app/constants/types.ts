@@ -171,6 +171,7 @@ export type StateProps = {
   isLoading: boolean;
   user: UserProps;
   tabIndex: number;
+  accountData: AccProps[];
 };
 
 export interface PaginationProps {

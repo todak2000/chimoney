@@ -1,6 +1,11 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable import/no-extraneous-dependencies */
-import { StateProps, UserProps } from "@/app/constants/types";
+import {
+  AccProps,
+  StateProps,
+  TransactionsProps,
+  UserProps,
+} from "@/app/constants/types";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import { configureStore, createSlice } from "@reduxjs/toolkit";
 
@@ -15,6 +20,35 @@ export const initialUser: UserProps = {
   phone: "",
   prefferedCurrency: defaultCurrency,
 };
+export const initiaAcc: AccProps[] = [];
+
+// User slice
+const AccountSlice = createSlice({
+  name: "accountData",
+  initialState: initiaAcc,
+  reducers: {
+    setAccountData: (_state: AccProps[], action: PayloadAction<AccProps[]>) => {
+      return action.payload;
+    },
+    updateBalanceAndAddTransaction: (
+      state: AccProps[],
+      action: PayloadAction<{
+        accountId: string;
+        newBalance: number;
+        transaction: TransactionsProps;
+      }>
+    ) => {
+      const { accountId, newBalance, transaction } = action.payload;
+      const accountIndex = state.findIndex((acc) => acc.id === accountId);
+      if (accountIndex !== -1) {
+        state[accountIndex].balance = newBalance;
+        state[accountIndex].transactions.push(transaction);
+      }
+
+      return state;
+    },
+  },
+});
 
 // User slice
 const UserSlice = createSlice({
@@ -74,12 +108,14 @@ export const { setUser, clearUser, updateCurrency, updateUserKey } =
   UserSlice.actions;
 export const { setIsLoading } = LoaderSlice.actions;
 export const { setTabIndex } = TabSlice.actions;
-
+export const { setAccountData, updateBalanceAndAddTransaction } =
+  AccountSlice.actions;
 const store = configureStore({
   reducer: {
     user: UserSlice.reducer,
     isLoading: LoaderSlice.reducer,
     tabIndex: TabSlice.reducer,
+    accountData: AccountSlice.reducer,
   },
 });
 
@@ -88,3 +124,4 @@ export default store;
 export const user = (state: StateProps) => state.user;
 export const isLoading = (state: StateProps) => state.isLoading;
 export const tabIndex = (state: StateProps) => state.tabIndex;
+export const accountDataa = (state: StateProps) => state.accountData;
