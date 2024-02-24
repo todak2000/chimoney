@@ -85,7 +85,8 @@ const Header: NextPage = () => {
             "flex flex-row items-center px-2 justify-between py-1 hover:rounded-full hover:bg-gray-200",
             {
               "bg-transparent ": tabIndexx !== 2,
-              "bg-tremor-brand-primary rounded-full": tabIndexx === 2,
+              "bg-tremor-brand-primary rounded-full hover:bg-indigo-400 ":
+                tabIndexx === 2,
             }
           )}
           onClick={() => dispatch(setTabIndex(2))}
