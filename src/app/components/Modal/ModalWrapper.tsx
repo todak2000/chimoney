@@ -10,12 +10,7 @@ import { BiLogoMastercard } from "react-icons/bi";
 import React from "react";
 import { key } from "@/app/lib/uniqueKey";
 import { Icon } from "@tremor/react";
-import {
-  AccProps,
-  ModalType,
-  ModalWrapperProps,
-  PaymentOptionsProps,
-} from "@/app/constants/types";
+import { ModalWrapperProps, PaymentOptionsProps } from "@/app/constants/types";
 
 const ModalWrapper = ({
   openModal,
@@ -175,7 +170,6 @@ const ModalWrapper = ({
         currentExchangeRate={currentExchangeRate}
         setNext={setNext}
         subHeader={config.subHeader}
-        accountData={config.accountData}
       />
     )
   );

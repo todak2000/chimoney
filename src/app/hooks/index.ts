@@ -1,4 +1,5 @@
 import {
+  accountDataa,
   clearUser,
   setAccountData,
   setIsLoading,
@@ -266,14 +267,20 @@ export const useSendToBank = () => {
   };
 };
 
-export const useUserBalance = (accountData: AccProps[]) => {
+export const useUserBalance = () => {
+  const accountData = useSelector(accountDataa);
   return useMemo(() => {
     if (accountData && accountData.length > 0) {
-      return {
-        chi: accountData[2].balance,
-        momo: accountData[0].balance,
-        airtime: accountData[0].balance,
+      const bal = {
+        chi: (accountData.find((obj) => obj.type === "chi") as AccProps)
+          .balance,
+        momo: (accountData.find((obj) => obj.type === "momo") as AccProps)
+          .balance,
+        airtime: (accountData.find((obj) => obj.type === "airtime") as AccProps)
+          .balance,
       };
+      console.log(bal, "balll");
+      return bal;
     }
   }, [accountData]);
 };

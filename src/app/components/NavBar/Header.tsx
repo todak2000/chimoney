@@ -4,14 +4,15 @@ import React, { useState } from "react";
 import { FaCirclePlay } from "react-icons/fa6";
 import { key } from "@/app/lib/uniqueKey";
 import { useDispatch, useSelector } from "react-redux";
-import { setTabIndex, tabIndex, updateCurrency, user } from "@/app/store";
-import { Icon, Switch } from "@tremor/react";
+import { setTabIndex, tabIndex, user } from "@/app/store";
+import { Icon } from "@tremor/react";
 import Image from "next/image";
 import { IoIosPower } from "react-icons/io";
 import { useAccountData, useSignOut } from "@/app/hooks";
 import LogOutModal from "@/app/components/Modal/LogOutModal";
 import Link from "next/link";
 import { cn } from "@/app/lib/cn";
+import CurrencySwitch from "./CurrencySwitch";
 const Header: NextPage = () => {
   const dispatch = useDispatch();
   const userr = useSelector(user);
@@ -20,14 +21,6 @@ const Header: NextPage = () => {
   useAccountData();
   const out = useSignOut();
   const arr = ["Overview", "Transactions"];
-  const [isSwitchOn, setIsSwitchOn] = React.useState<boolean>(
-    userr.prefferedCurrency !== "USD"
-  );
-
-  const handleSwitchChange = (value: boolean) => {
-    setIsSwitchOn(value);
-    dispatch(updateCurrency(value ? "NGN" : "USD"));
-  };
 
   return (
     <header className="h-20 border-b-[1px] p-2 md:px-10 pb-4 md:pt-4 border-b-gray-300 flex w-full flex-row justify-between items-center">
@@ -60,27 +53,9 @@ const Header: NextPage = () => {
       </div>
 
       <section className="flex flex-row items-center md:w-1/3 justify-end">
-        <label
-          className={cn(
-            "hidden md:inline-flex items-center me-5 cursor-pointer",
-            {
-              "md:hidden": tabIndexx === 1 || tabIndexx == 2,
-            }
-          )}
-        >
-          <span className="mx-3 text-sm font-medium text-gray-900 dark:text-gray-300">
-            USD
-          </span>
-          <Switch
-            id="switch"
-            name="switch"
-            checked={isSwitchOn}
-            onChange={handleSwitchChange}
-          />
-          <span className="mx-3 text-sm font-medium text-gray-900 dark:text-gray-300">
-            NGN
-          </span>
-        </label>
+        <span className="md:flex hidden">
+          <CurrencySwitch />
+        </span>
         <Link
           href="#"
           className={cn(

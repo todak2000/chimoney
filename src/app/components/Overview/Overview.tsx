@@ -25,6 +25,7 @@ import {
 } from "@/app/constants/types";
 import { user } from "@/app/store";
 import { cn } from "@/app/lib/cn";
+import CurrencySwitch from "../NavBar/CurrencySwitch";
 
 const Overview = ({
   accountData,
@@ -57,10 +58,7 @@ const Overview = ({
       id: key(),
       title: "Add Money",
       icon: (
-        <Icon
-          icon={IoIosAdd}
-          className="text-white hover:text-tremor-brand-primary dark:text-white text-sm"
-        />
+        <IoIosAdd className="text-white hover:text-tremor-brand-primary dark:text-white text-sm" />
       ),
       onClick: () => setOpenModal("credit"),
       loading: false,
@@ -71,10 +69,7 @@ const Overview = ({
       id: key(),
       title: "Send Money",
       icon: (
-        <Icon
-          icon={MdArrowOutward}
-          className="text-black text-sm dark:text-white hover:text-white"
-        />
+        <MdArrowOutward className="text-black text-sm dark:text-white hover:text-white" />
       ),
       onClick: () => setOpenModal("debit"),
       loading: false,
@@ -87,13 +82,15 @@ const Overview = ({
     <section className=" overflow-y-auto h-[95vh] p-2 sm:p-10 flex flex-col  items-center w-full">
       <Flex className="flex md:flex-row flex-col-reverse">
         <div className="space-y-2 dark:invert  w-full md:w-auto">
-          <p className="text-gray-600 font-thin">
+          <p className="text-gray-600 font-thin md:block hidden">
             Balance{" "}
             <span className="text-black font-thin ml-3 text-xs">
               Today, {dateFormater()}
             </span>
           </p>
-
+          <span className="flex md:hidden">
+            <CurrencySwitch />
+          </span>
           <div className="flex flex-col md:flex-row space-y-3 md:space-y-0 md:space-x-3">
             {isPending || !accountData || accountData?.length <= 0
               ? [1, 2, 3].map(() => {

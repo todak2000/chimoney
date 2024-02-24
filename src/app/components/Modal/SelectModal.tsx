@@ -16,11 +16,7 @@ import {
 } from "@/app/hooks";
 import { showToastError, showToastSuccess } from "@/app/lib/toast";
 import FinalForm from "@/app/components/Modal/FinalForm";
-import {
-  AccProps,
-  SelectModalProps,
-  finalFormDataProps,
-} from "@/app/constants/types";
+import { SelectModalProps, finalFormDataProps } from "@/app/constants/types";
 import { useQueryClient } from "@tanstack/react-query";
 import {
   getBackFunction,
@@ -28,6 +24,9 @@ import {
   getSchema,
   getSubHeader,
 } from "@/app/constants/modal";
+import { useDispatch, useSelector } from "react-redux";
+import { updateBalanceAndAddTransaction, user } from "@/app/store";
+import { Dispatch } from "@reduxjs/toolkit";
 
 const SelectModal = ({
   open,
@@ -39,13 +38,13 @@ const SelectModal = ({
   setNext,
   currentExchangeRate,
   subHeader,
-  accountData,
 }: SelectModalProps) => {
   const queryClient = useQueryClient();
   const [finalResultData, setFinalResultData] =
     useState<finalFormDataProps | null>(null);
-
-  const userBalance = useUserBalance(accountData as AccProps[]);
+  const dispatch = useDispatch();
+  const userr = useSelector(user);
+  const userBalance = useUserBalance();
   const {
     handlePaymentLink,
     isPending: linkIsPending,
@@ -103,7 +102,8 @@ const SelectModal = ({
     },
     error: Error | null,
     isError: boolean,
-    type: string
+    type: string,
+    dispatch: Dispatch
   ) => {
     if (data && data.status === "success" && next === type) {
       queryClient.invalidateQueries({ queryKey: ["userDetails"] });
@@ -128,15 +128,43 @@ const SelectModal = ({
           chiRef: data.data.chiRef,
           payee: data.data.payerEmail,
           paymentLink: data.data.paymentLink,
-          // paymentStatus: data.data.status,
-          // paymentRef: data.data.paymentRef,
         };
       }
 
       setFinalResultData(finalResultData);
+      const dynamicAmount =
+        userr.prefferedCurrency === "USD"
+          ? data.data?.valueInUSD
+          : data.data?.valueInUSD / currentExchangeRate();
+      console.log(userBalance, "userBalance");
+      const newBalancee =
+        (userBalance && userBalance?.chi - dynamicAmount) || 0;
+      const txn = {
+        amount: dynamicAmount,
+        balanceBefore: (userBalance && userBalance?.chi) || 0,
+        description: "Payment from .....",
+
+        meta: {
+          date: {
+            _seconds: Math.floor(Date.now() / 1000),
+            _nanoseconds: Date.now() * 1e6,
+          },
+        },
+        newBalance: newBalancee,
+        type: "Debit",
+        wallet: "chi",
+      };
+
       setNext(`final-${type}`);
       showToastSuccess(
         `Yea! Payment ${type === "link" || type === "card" ? "Link" : ""} was successful. ${type === "card" ? "Please wait while you are redirected. Thanks" : ""}`
+      );
+      dispatch(
+        updateBalanceAndAddTransaction({
+          accountId: userr.accountNo as string,
+          newBalance: newBalancee,
+          transaction: txn,
+        })
       );
     } else if ((data && data.status !== "success") || isError) {
       showToastError("Oops! something went wrong");
@@ -144,12 +172,12 @@ const SelectModal = ({
   };
 
   useEffect(() => {
-    handleResponse(emailData, emailError, emailIsError, "email");
-    handleResponse(p2pData, p2pError, p2pIsError, "p2p");
+    handleResponse(emailData, emailError, emailIsError, "email", dispatch);
+    handleResponse(p2pData, p2pError, p2pIsError, "p2p", dispatch);
 
-    handleResponse(linkData, linkError, linkIsError, "link");
-    handleResponse(linkData, linkError, linkIsError, "card");
-    handleResponse(bankData, bankError, bankIsError, "bank");
+    handleResponse(linkData, linkError, linkIsError, "link", dispatch);
+    handleResponse(linkData, linkError, linkIsError, "card", dispatch);
+    handleResponse(bankData, bankError, bankIsError, "bank", dispatch);
   }, [
     emailData,
     emailError,
@@ -224,6 +252,7 @@ const SelectModal = ({
       case "final-bank":
         return (
           <FinalForm
+            next={next}
             data={finalResultData as finalFormDataProps}
             currentExchangeRate={currentExchangeRate}
             subHeader={

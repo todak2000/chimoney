@@ -28,6 +28,7 @@ describe("onSubmit function", () => {
     const setName = jest.fn();
     const setBanks = jest.fn();
     const setBranches = jest.fn();
+    const dispatch = jest.fn();
     const currentExchangeRate = () => 1;
     const resetForm = jest.fn();
     (useSelector as unknown as jest.Mock).mockImplementation((callback) => {
@@ -45,7 +46,8 @@ describe("onSubmit function", () => {
       setName,
       currentExchangeRate,
       setBanks,
-      setBranches
+      setBranches,
+      dispatch
     );
 
     expect(showToastError).toHaveBeenCalledWith(

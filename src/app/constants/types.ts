@@ -70,7 +70,6 @@ export interface SelectModalProps {
   subHeader: string;
   next: string;
   currentExchangeRate: () => number;
-  accountData?: AccProps[] | null;
   setNext: React.Dispatch<React.SetStateAction<string>>;
   setOpen: Function;
 }
@@ -114,6 +113,7 @@ export type FormData = {
 }[];
 
 export interface FinalModalProps {
+  next: string;
   data: finalFormDataProps;
   subHeader: string;
   currentExchangeRate: () => number;
@@ -177,7 +177,6 @@ export type StateProps = {
 export interface PaginationProps {
   data: TransactionsProps[];
   itemsPerPage: number;
-  // currentData: TransactionsProps[];
   setCurrentData: React.Dispatch<React.SetStateAction<TransactionsProps[]>>;
   value: string;
 }

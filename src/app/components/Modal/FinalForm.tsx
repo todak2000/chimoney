@@ -9,6 +9,7 @@ import { useSelector } from "react-redux";
 import { user } from "@/app/store";
 
 const FinalModalForm = ({
+  next,
   data,
   subHeader,
   backFn,
@@ -35,7 +36,9 @@ const FinalModalForm = ({
         <div className="p-4 md:p-5 text-center space-y-3">
           <span className="text-[70px]">💰</span>
           <h3 className="text-lg font-normal text-gray-500 dark:text-gray-400">
-            You have successfully paid
+            {next === "final-email"
+              ? "Pending Outgoing Payment of"
+              : "You have successfully sent"}
           </h3>
 
           <h3 className="text-gray-900 font-bold dark:text-white">
