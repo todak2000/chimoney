@@ -1,4 +1,10 @@
-import { clearUser, isLoading, setIsLoading, setUser, user } from "@/app/store";
+import {
+  clearUser,
+  setAccountData,
+  setIsLoading,
+  setUser,
+  user,
+} from "@/app/store";
 import { auth } from "@/firebase";
 import { useRouter } from "next/navigation";
 import { useEffect, useCallback, useState, useMemo } from "react";
@@ -17,7 +23,11 @@ import {
   updateAccountDetails,
 } from "@/app/api/other/chimoney";
 import { getAccountId, handleGoogleSignOut } from "@/app/api/auth";
-import { showToastError, showToastSuccess } from "@/app/lib/toast";
+import {
+  ChimoneyToast,
+  showToastError,
+  showToastSuccess,
+} from "@/app/lib/toast";
 import { AccProps } from "@/app/constants/types";
 
 // get user Details
@@ -92,40 +102,25 @@ export const useSignOut = () => {
 };
 
 export const useAccountData = () => {
-  const [accountData, setAccountData] = useState<AccProps[]>([]);
-  const [phone, setPhone] = useState<string>("");
   const dispatch = useDispatch();
   const userr = useSelector(user);
-  const isLoadingg = useSelector(isLoading);
-  const { isPending, data, error, isSuccess, isError } =
-    useGetUserChimoneyDetails(userr.accountNo);
-
-  const handleSuccess = useCallback(() => {
+  const { data, isSuccess, isPending } = useGetUserChimoneyDetails(
+    userr.accountNo
+  );
+  useEffect(() => {
     if (isSuccess) {
-      setAccountData(data?.data?.wallets);
-      setPhone(data?.data?.phone);
+      dispatch(setAccountData(data?.data?.wallets));
     }
-  }, [isSuccess, data, isLoadingg, dispatch, userr]);
-
-  const handleError = useCallback(() => {
-    if (isError || error) {
-      showToastError("Oops! an error occured!");
-    }
-  }, [isError, error]);
+  }, [data, isSuccess, dispatch]);
 
   useEffect(() => {
-    handleSuccess();
-    handleError();
-  }, [
-    handleSuccess,
-    handleError,
-    useGetUserChimoneyDetails,
-    dispatch,
-    isLoadingg,
-    userr,
-  ]);
-
-  return { accountData, isPending, phone };
+    ChimoneyToast.dismiss();
+    setTimeout(() => {
+      dispatch(setIsLoading(false));
+    }, 900);
+  }, [dispatch]);
+  console.log(data?.data?.wallets[0]?.balance, "acount data balance----");
+  return { isPending };
 };
 
 export const useCreatePaymentLink = () => {

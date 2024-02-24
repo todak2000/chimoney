@@ -8,7 +8,7 @@ import { setTabIndex, tabIndex, updateCurrency, user } from "@/app/store";
 import { Icon, Switch } from "@tremor/react";
 import Image from "next/image";
 import { IoIosPower } from "react-icons/io";
-import { useSignOut } from "@/app/hooks";
+import { useAccountData, useSignOut } from "@/app/hooks";
 import LogOutModal from "@/app/components/Modal/LogOutModal";
 import Link from "next/link";
 import { cn } from "@/app/lib/cn";
@@ -17,7 +17,7 @@ const Header: NextPage = () => {
   const userr = useSelector(user);
   const tabIndexx = useSelector(tabIndex);
   const [openModal, setOpenModal] = useState<boolean>(false);
-
+  useAccountData();
   const out = useSignOut();
   const arr = ["Overview", "Transactions"];
   const [isSwitchOn, setIsSwitchOn] = React.useState<boolean>(
@@ -41,7 +41,9 @@ const Header: NextPage = () => {
             return (
               <li className="me-2" key={key()}>
                 <button
-                  onClick={() => dispatch(setTabIndex(index))}
+                  onClick={() => {
+                    dispatch(setTabIndex(index));
+                  }}
                   className={cn({
                     "inline-flex items-center justify-center py-1 px-2 md:px-4 border-transparent rounded-full hover:text-gray-600 hover:border-text-tremor-brand-primary dark:hover:text-gray-300 group text-xs md:text-sm":
                       tabIndexx !== index,

@@ -134,7 +134,7 @@ Being a NextJS app which allows for both client and server side development, end
 
 ## CI/CD and Deployment
 
-This app was set up using CircleCI pipeline which allows for seamless transition of codebase to production artifacts as well as deployed to vercel. Only upon successful setup does it deploys to vercel
+This app was set up using github actions which initiates deployment process by running test, build artifacts and deploying directly on vercel. So every PR to the `main` branch triggers the pipeline. see `.github/workflows/main.yml` for details.
 
 ## License
 

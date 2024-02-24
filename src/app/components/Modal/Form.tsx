@@ -11,7 +11,7 @@ import {
   useHandleBranchData,
   useHandleWalletData,
 } from "@/app/hooks";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { user } from "@/app/store";
 import { GrSend } from "react-icons/gr";
 import { showToastError } from "@/app/lib/toast";
@@ -125,6 +125,7 @@ const ModalForm = ({
 }: FormProps) => {
   const [namePending, setNamePending] = useState<boolean>(false);
   const userr = useSelector(user);
+  const dispatch = useDispatch();
   const {
     getAccountDetails,
     isSuccess: walletIsSuccess,
@@ -198,7 +199,8 @@ const ModalForm = ({
             setName,
             currentExchangeRate,
             setBanks,
-            setBranches
+            setBranches,
+            dispatch
           );
         }}
       >
