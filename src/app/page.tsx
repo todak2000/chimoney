@@ -18,7 +18,7 @@ export default function Home() {
     ChimoneyToast.dismiss();
     setTimeout(() => {
       dispatch(setIsLoading(false));
-    }, 900);
+    }, 3000);
   }, []);
 
   return (

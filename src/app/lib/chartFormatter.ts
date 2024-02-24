@@ -66,6 +66,9 @@ export const transformDataNGN = (
       const date = moment
         .unix(transaction?.meta?.date?._seconds as number)
         .format("MMM DD YYYY");
+      const dateTime = moment
+        .unix(transaction?.meta?.date?._seconds as number)
+        .format("YYYY-MM-DD HH:mm:ss");
       const balanceKey = account.type.toLocaleUpperCase();
       const newBalance =
         transaction &&
@@ -85,7 +88,7 @@ export const transformDataNGN = (
       }
       transactionResults.push({
         description: transaction.description,
-        date,
+        date: dateTime,
         amount:
           transaction && transaction.amount !== undefined
             ? Math.abs(transaction.amount) * currentExchangeRate()

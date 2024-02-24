@@ -25,6 +25,7 @@ import { TransactionViewProps, TransactionsProps } from "@/app/constants/types";
 import { user } from "@/app/store";
 import Pagination from "./Pagination";
 import { comingSoonToast } from "@/app/lib/toast";
+import moment from "moment";
 const TransactionTable = ({
   transactionData,
   isPending: loading,
@@ -79,7 +80,6 @@ const TransactionTable = ({
       <Pagination
         data={transactionData}
         itemsPerPage={10}
-        // currentData={data}
         setCurrentData={setData}
         value={value}
       />
@@ -127,7 +127,7 @@ const TransactionTable = ({
                     className="hover:bg-gray-200"
                   >
                     <TableCell className="flex flex-row items-center medium-lg text-[#3A3F51] dark:invert">
-                      <Text>{date}</Text>
+                      <Text>{moment(date).format("MMM DD YYYY")}</Text>
                     </TableCell>
                     <TableCell className="regular-lg text-[#737373]">
                       <Text>
@@ -135,9 +135,9 @@ const TransactionTable = ({
                       </Text>
                     </TableCell>
                     <TableCell className="text-sm text-tremor-brand-hover">
-                      {description.length > 20
-                        ? `${description.substring(0, 20)}..`
-                        : description}
+                      {type === "Debit"
+                        ? "Withdrawal from Wallet"
+                        : "Paid into Walet"}
                     </TableCell>
                     <TableCell
                       className={cn({

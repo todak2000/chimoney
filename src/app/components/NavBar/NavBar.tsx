@@ -40,7 +40,7 @@ const navBarArr: INavBar[] = [
   },
 ];
 const NavBar: NextPage = () => {
-  const [showHamburger, setShowHamburger] = useState<boolean>(false);
+  const [showHamburger, setShowHamburger] = useState<boolean>(true);
   useAuthStateChange();
   const [openModal, setOpenModal] = useState<boolean>(false);
   const loading = useSelector(isLoading);
@@ -52,10 +52,7 @@ const NavBar: NextPage = () => {
   return (
     <header className="h-20 flex w-full flex-row justify-between items-center">
       <div className="flex flex-row items-center">
-        <FaCirclePlay
-          data-testid="logo"
-          className="text-tremor-brand-primary text-xl mx-2"
-        />
+        <FaCirclePlay className="text-tremor-brand-primary text-xl mx-2" />
         <span className=" text-tremor-brand-primary text-xl">Chimoney</span>
       </div>
       {!showHamburger ? (
@@ -74,7 +71,7 @@ const NavBar: NextPage = () => {
           "hidden md:flex flex-col md:flex-row items-center w-2/3 justify-end",
           {
             hidden: showHamburger,
-            "flex bg-white dark:bg-black py-4 z-50 absolute justify-start top-16 md:relative md:top-0 w-full right-0 md:flex-row md:items-center md:w-2/3 md:justify-end":
+            "flex bg-white h-screen dark:bg-black py-4 z-50 absolute justify-start top-16 md:relative md:top-0 w-full right-0 md:flex-row md:items-center md:w-2/3 md:justify-end":
               !showHamburger,
           }
         )}
@@ -87,7 +84,7 @@ const NavBar: NextPage = () => {
               href={url}
               key={id}
               className={cn(
-                "px-4 py-3 hover:text-tremor-brand-primary text-black dark:invert flex-row text-xs flex justify-center items-center relative ",
+                "px-4 py-3 hover:text-gray-500  text-black dark:invert flex-row text-xs flex justify-center items-center relative ",
                 {
                   "text-lg md:text-xs": !showHamburger,
                 }
@@ -98,7 +95,7 @@ const NavBar: NextPage = () => {
           );
         })}
         {userr?.name !== "" ? (
-          <section className="flex flex-row items-center " data-testid="user">
+          <section className="flex flex-row items-center ">
             {loading ? (
               <>
                 <SkeletonLoader
@@ -129,7 +126,6 @@ const NavBar: NextPage = () => {
                 </p>
                 <Icon
                   icon={IoIosPower}
-                  data-testid="logout"
                   className="text-red-400 cursor-pointer"
                   onClick={() => setOpenModal(true)}
                 />

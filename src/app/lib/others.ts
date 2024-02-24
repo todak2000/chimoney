@@ -1,8 +1,5 @@
 import { showToastError, showToastSuccess } from "@/app/lib/toast";
 import { UserProps } from "../constants/types";
-import { updateBalanceAndAddTransaction } from "../store";
-import { Dispatch } from "@reduxjs/toolkit";
-
 export const onSubmit = async (
   values: any,
 
@@ -21,8 +18,7 @@ export const onSubmit = async (
   setName: (name: string) => void,
   currentExchangeRate: () => number,
   setBanks: (banks: object[]) => void,
-  setBranches: (branches: object[]) => void,
-  dispatch: Dispatch
+  setBranches: (branches: object[]) => void
 ) => {
   const resetState = () => {
     setEmail("");
@@ -36,22 +32,7 @@ export const onSubmit = async (
     userr.prefferedCurrency === "USD"
       ? values.amount
       : values.amount / currentExchangeRate();
-  const newBalancee = userBalance.chi - dynamicAmount;
-  const txn = {
-    amount: dynamicAmount,
-    balanceBefore: userBalance.chi,
-    description: "Payment from wallet",
 
-    meta: {
-      date: {
-        _seconds: Math.floor(Date.now() / 1000),
-        _nanoseconds: Date.now() * 1e6,
-      },
-    },
-    newBalance: newBalancee,
-    type: "Debit",
-    wallet: "chi",
-  };
   if (
     subHeader.includes("Send Fund") &&
     (userr.accountNo === values.receiverID || userr.email === values.email)
@@ -76,13 +57,6 @@ export const onSubmit = async (
       payeeID: userr.accountNo,
     });
 
-    dispatch(
-      updateBalanceAndAddTransaction({
-        accountId: userr.accountNo as string,
-        newBalance: newBalancee,
-        transaction: txn,
-      })
-    );
     resetState();
   } else if (
     subHeader === "Send Fund to Bank" &&
@@ -90,23 +64,12 @@ export const onSubmit = async (
     userBalance?.chi >= dynamicAmount
   ) {
     submitFn(values);
-    dispatch(
-      updateBalanceAndAddTransaction({
-        accountId: userr.accountNo as string,
-        newBalance: newBalancee,
-        transaction: txn,
-      })
-    );
     resetState();
   } else {
-    submitFn({ amount: dynamicAmount, email: values.email });
-    dispatch(
-      updateBalanceAndAddTransaction({
-        accountId: userr.accountNo as string,
-        newBalance: newBalancee,
-        transaction: txn,
-      })
-    );
+    submitFn({
+      amount: dynamicAmount,
+      email: values.email,
+    });
     resetState();
   }
 };

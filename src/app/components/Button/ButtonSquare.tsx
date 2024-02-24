@@ -17,7 +17,7 @@ const ButtonSquare = ({
       disabled={loading}
       onClick={onClick}
       className={cn(
-        "flex text-xs text-white  flex-row items-center justify-center px-4 py-1 focus:ring-[0.7px] focus:outline-none focus:ring-tremor-brand-primary",
+        "flex text-xs text-white  flex-row items-center justify-center px-2 py-2 focus:ring-[0.7px] focus:outline-none focus:ring-tremor-brand-primary",
         className
       )}
     >
