@@ -4,8 +4,8 @@ orbs:
   node: circleci/node@5.2
 
 jobs:
-  # job name
-  build-and-test:
+  # job 1 name
+  build-and-test-and-deploy:
     # Specify the execution environment. You can specify an image from Docker Hub or use one of our convenience images from CircleCI's Developer Hub.
     docker:
       # Specify the version you desire here
@@ -29,15 +29,17 @@ jobs:
       - run:
           name: Run build
           command: yarn build
-
-      # Step 5: Post Build
+      # Step 5 - install Vercel CLI
       - run:
-          name: Run postbuild
-          command: yarn postbuild
+          name: Install Vercel CLI
+          command: yarn global add vercel
+      - run:
+          name: Deploy to Vercel
+          command: vercel --token $CHIMONEY_VERCEL_DEPLOYEMENT_TOKEN --prod
 
 # Orchestrate jobs using workflows
 workflows:
   # This is the name of the workflow, feel free to change it to better match your workflow.
   prod-build-test:
     jobs:
-      - build-and-test
+      - build-and-test-and-deploy
