@@ -51,7 +51,7 @@ const NavBar: NextPage = () => {
   const arr = userr.name !== "" ? navBarArr : navBarArr.slice(0, 3);
   return (
     <header className="h-20 flex w-full flex-row justify-between items-center">
-      <div className="flex flex-row items-center">
+      <div className="flex flex-row items-center" data-testid="logo">
         <FaCirclePlay className="text-tremor-brand-primary text-xl mx-2" />
         <span className=" text-tremor-brand-primary text-xl">Chimoney</span>
       </div>
@@ -95,7 +95,7 @@ const NavBar: NextPage = () => {
           );
         })}
         {userr?.name !== "" ? (
-          <section className="flex flex-row items-center ">
+          <section className="flex flex-row items-center " data-testid="user">
             {loading ? (
               <>
                 <SkeletonLoader
@@ -126,6 +126,7 @@ const NavBar: NextPage = () => {
                 </p>
                 <Icon
                   icon={IoIosPower}
+                  data-testid="logout"
                   className="text-red-400 cursor-pointer"
                   onClick={() => setOpenModal(true)}
                 />
