@@ -1,0 +1,43 @@
+version: 2.1
+
+orbs:
+  node: circleci/node@5.2
+
+jobs:
+  # job name
+  build-and-test:
+    # Specify the execution environment. You can specify an image from Docker Hub or use one of our convenience images from CircleCI's Developer Hub.
+    docker:
+      # Specify the version you desire here
+      - image: cimg/node:20.10.0
+    # Add steps to the job
+    steps:
+      # Step 1: Checkout the code as the first step.
+      - checkout
+
+      # Step 2: Install dependencies and associated libraries
+      - node/install-packages:
+          # If you are using yarn, change the line below from "npm" to "yarn"
+          pkg-manager: yarn
+
+      # Step 3: run test if you have tests to run
+      - run:
+          name: Run tests
+          command: yarn test
+
+      # Step 4: Build
+      - run:
+          name: Run build
+          command: yarn build
+
+      # Step 5: Post Build
+      - run:
+          name: Run build
+          command: yarn postbuild
+
+# Orchestrate jobs using workflows
+workflows:
+  # This is the name of the workflow, feel free to change it to better match your workflow.
+  prod-build-test:
+    jobs:
+      - build-and-test

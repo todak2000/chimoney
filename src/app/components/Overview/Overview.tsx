@@ -139,6 +139,7 @@ const Overview = ({
                   return (
                     <Card
                       key={key()}
+                      data-testid="card"
                       className="mx-auto  max-w-xl dark:invert space-y-2"
                     >
                       <span className="flex flex-row items-center space-x-2">

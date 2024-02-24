@@ -176,7 +176,7 @@ export type StateProps = {
 export interface PaginationProps {
   data: TransactionsProps[];
   itemsPerPage: number;
-  currentData: TransactionsProps[];
+  // currentData: TransactionsProps[];
   setCurrentData: React.Dispatch<React.SetStateAction<TransactionsProps[]>>;
   value: string;
 }
