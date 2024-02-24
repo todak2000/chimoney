@@ -13,7 +13,7 @@
     "format": "next lint --fix && prettier '**/*.{json,yaml}' --write --ignore-path .gitignore",
     "check-types": "tsc --noEmit --pretty",
     "test": "jest",
-    "commit": "git add . && cz",
+    "commit": "git add . && cz && git push",
     "prepare": "husky install",
     "postbuild": "next-sitemap",
     "build-stats": "cross-env ANALYZE=true npm run build",

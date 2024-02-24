@@ -160,9 +160,9 @@ export const valueToUse = (
   name: string,
   formValue: string | number
 ) => {
-  return isEmailOrName(key) && email !== "" && isSendFundViaWallet(subHeader)
+  return key === "email" && email !== "" && isSendFundViaWallet(subHeader)
     ? email
-    : isEmailOrName(key) && name !== "" && isSendFundViaWallet(subHeader)
+    : key === "name" && name !== "" && isSendFundViaWallet(subHeader)
       ? name
       : formValue;
 };
