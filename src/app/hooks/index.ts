@@ -120,7 +120,6 @@ export const useAccountData = () => {
       dispatch(setIsLoading(false));
     }, 900);
   }, [dispatch]);
-  console.log(data?.data?.wallets[0]?.balance, "acount data balance----");
   return { isPending };
 };
 

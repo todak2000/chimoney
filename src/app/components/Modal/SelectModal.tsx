@@ -136,7 +136,7 @@ const SelectModal = ({
         userr.prefferedCurrency === "USD"
           ? data.data?.valueInUSD
           : data.data?.valueInUSD / currentExchangeRate();
-      console.log(userBalance, "userBalance");
+
       const newBalancee =
         (userBalance && userBalance?.chi - dynamicAmount) || 0;
       const txn = {
