@@ -2,13 +2,13 @@
 
     "A streamlined app that allows users to securely create and manage their accounts, send and receive payments, and view their transaction history, all integrated with Chimoney’s API and deployed live for easy access",
 
-![Image bandage](public/chimoney.png)
+![Image chimoney](public/chimoney.png)
 
 ## LightHouse Score
 
 ![Light house score - Desktop](lighthouse_results/desktop/pagespeed.svg)
 
-[LIGHTHOUSE SCORE LINK](https://htmlpreview.github.io/?https://github.com/todak2000/chimoney/blob/main/lighthouse_results/desktop/chimoney_app_.html)
+[LIGHTHOUSE SCORE LINK](https://htmlpreview.github.io/?https://github.com/todak2000/chimoney/blob/main/lighthouse_results/desktop/chimoney_pi_vercel_app.html)
 
 ## URL
 
