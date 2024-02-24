@@ -36,6 +36,16 @@ jobs:
 
       - name: Build
         run: yarn build
+        env:
+          NEXT_PUBLIC_APIKEY: ${{ secrets.NEXT_PUBLIC_APIKEY }}
+          NEXT_PUBLIC_AUTHDOMAIN: ${{ secrets.NEXT_PUBLIC_AUTHDOMAIN }}
+          NEXT_PUBLIC_CHIMONEY_URL: ${{ secrets.NEXT_PUBLIC_CHIMONEY_URL }}
+          NEXT_PUBLIC_CHIMONEY_API_KEY: ${{ secrets.NEXT_PUBLIC_CHIMONEY_API_KEY }}
+          NEXT_PUBLIC_REDIRECT_URL: ${{ secrets.NEXT_PUBLIC_REDIRECT_URL }}
+          NEXT_PUBLIC_PROJECTID: ${{ secrets.NEXT_PUBLIC_PROJECTID }}
+          NEXT_PUBLIC_MESSAGINGSENDERID: ${{ secrets.NEXT_PUBLIC_MESSAGINGSENDERID }}
+          NEXT_PUBLIC_STORAGEBUCKET: ${{ secrets.NEXT_PUBLIC_STORAGEBUCKET }}
+          NEXT_PUBLIC_APPID: ${{ secrets.NEXT_PUBLIC_APPID }}
 
   deploy:
     needs: build-and-test
