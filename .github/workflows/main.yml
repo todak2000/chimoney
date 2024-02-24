@@ -10,37 +10,47 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-    - name: Use Node.js
-      uses: actions/setup-node@v2
-      with:
-        node-version: '20'
+      - name: Use Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: "20"
 
-    - name: Install dependencies
-      run: yarn install
+      - name: Install dependencies
+        run: yarn install
 
-    - name: Run tests
-      run: yarn test
+      - name: Run tests
+        run: yarn test
+        env:
+          NEXT_PUBLIC_APIKEY: ${{ secrets.NEXT_PUBLIC_APIKEY }}
+          NEXT_PUBLIC_AUTHDOMAIN: ${{ secrets.NEXT_PUBLIC_AUTHDOMAIN }}
+          NEXT_PUBLIC_CHIMONEY_URL: ${{ secrets.NEXT_PUBLIC_CHIMONEY_URL }}
+          NEXT_PUBLIC_CHIMONEY_API_KEY: ${{ secrets.NEXT_PUBLIC_CHIMONEY_API_KEY }}
+          NEXT_PUBLIC_REDIRECT_URL: ${{ secrets.NEXT_PUBLIC_REDIRECT_URL }}
+          NEXT_PUBLIC_PROJECTID: ${{ secrets.NEXT_PUBLIC_PROJECTID }}
+          NEXT_PUBLIC_MESSAGINGSENDERID: ${{ secrets.NEXT_PUBLIC_MESSAGINGSENDERID }}
+          NEXT_PUBLIC_STORAGEBUCKET: ${{ secrets.NEXT_PUBLIC_STORAGEBUCKET }}
+          NEXT_PUBLIC_APPID: ${{ secrets.NEXT_PUBLIC_APPID }}
 
-    - name: Build
-      run: yarn build
+      - name: Build
+        run: yarn build
 
   deploy:
     needs: build-and-test
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-    - name: Install Vercel CLI
-      run: npm i -g vercel
+      - name: Install Vercel CLI
+        run: npm i -g vercel
 
-    - name: Deploy to Vercel
-      run: |
-        echo "VERCEL_TOKEN=${{ secrets.VERCEL_TOKEN }}" >> $GITHUB_ENV
-        echo "VERCEL_ORG_ID=${{ secrets.VERCEL_ORG_ID }}" >> $GITHUB_ENV
-        echo "VERCEL_PROJECT_ID=${{ secrets.VERCEL_PROJECT_ID }}" >> $GITHUB_ENV
-        vercel --token $VERCEL_TOKEN --prod --scope todak2000 --name chimoney
+      - name: Deploy to Vercel
+        run: |
+          echo "VERCEL_TOKEN=${{ secrets.VERCEL_TOKEN }}" >> $GITHUB_ENV
+          echo "VERCEL_ORG_ID=${{ secrets.VERCEL_ORG_ID }}" >> $GITHUB_ENV
+          echo "VERCEL_PROJECT_ID=${{ secrets.VERCEL_PROJECT_ID }}" >> $GITHUB_ENV
+          vercel --token $VERCEL_TOKEN --prod --scope todak2000 --name chimoney
