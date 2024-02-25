@@ -86,8 +86,20 @@ export const getSubHeader = (next: string) => {
 
 export const getFormData = (next: string) => {
   switch (next) {
-    case "link":
     case "email":
+      return [
+        {
+          email: "",
+        },
+        {
+          name: "",
+        },
+        {
+          amount: "",
+        },
+        { receiverID: "" },
+      ];
+    case "link":
     case "card":
       return [
         {
@@ -104,9 +116,6 @@ export const getFormData = (next: string) => {
         },
         {
           name: "",
-        },
-        {
-          email: "",
         },
         {
           amount: "",
@@ -142,6 +151,9 @@ export const getFormData = (next: string) => {
 export const isSendFundViaWallet = (text: string) => {
   return text === "Send Fund via Wallet";
 };
+export const isSendFundViaEmail = (text: string, key: string) => {
+  return text === "Send Fund via Email" && key === "name";
+};
 export const isReceiverID = (text: string) => {
   return text === "receiverID";
 };
@@ -162,7 +174,8 @@ export const valueToUse = (
 ) => {
   return key === "email" && email !== "" && isSendFundViaWallet(subHeader)
     ? email
-    : key === "name" && name !== "" && isSendFundViaWallet(subHeader)
+    : (key === "name" && name !== "" && isSendFundViaWallet(subHeader)) ||
+        (key === "name" && subHeader === "Send Fund via Email")
       ? name
       : formValue;
 };
@@ -203,7 +216,7 @@ export const isFormLoading = (
     (walletPending && subHeader === "Send Fund via Wallet" && idValue !== "") ||
     (banksPending && subHeader === "Send Fund to Bank") ||
     (branchPending && subHeader === "Send Fund to Bank") ||
-    (namePending && subHeader === "Send Fund to Bank")
+    (namePending && subHeader.includes("Send Fund"))
   );
 };
 export const maxLengthToUse = (key: string, countryValue: string) => {
@@ -259,9 +272,13 @@ export const componentToUse = (
       : null;
 };
 
-export const classNameToUse = (key: string, subHeader: string) => {
+export const classNameToUse = (
+  key: string,
+  subHeader: string,
+  loading: boolean
+) => {
   return cn(
-    "relative  border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500",
+    "relative bg-gray-50  border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-600 focus:border-indigo-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500",
     {
       "bg-tremor-brand-secondary":
         isEmailOrName(key) && isSendFundViaWallet(subHeader),

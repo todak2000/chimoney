@@ -24,16 +24,17 @@ import {
   isFormLoading,
   isFullnameAndNG,
   isReceiverID,
+  isSendFundViaEmail,
   isSendFundViaWallet,
   maxLengthToUse,
   onSelectToUse,
   optionsToUse,
   showBranchCodeComponent,
   showFullNameComponent,
-  showFullNameComponentNG,
   valueToUse,
 } from "@/app/constants/modal";
 import { getKeyName, onSubmit } from "@/app/lib/others";
+import { getAccountNumberByEmail } from "@/app/api/auth";
 
 const SelectInput = ({ field, form, options, onSelect }: SelectInputProps) => {
   const [selectedValue, setSelectedValue] = useState<string>("");
@@ -99,7 +100,7 @@ const CurrencyInput = ({ field, form }: FieldProps) => {
           setOriginalValue(number?.toString());
           form.setFieldValue(field.name, number);
         }}
-        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-600 focus:border-indigo-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
       />
       {field.value !== "" && userr.prefferedCurrency !== "USD" && (
         <span className="text-tremor-brand-primary text-xs ">
@@ -145,6 +146,9 @@ const ModalForm = ({
     data: branchData,
     isPending: branchPending,
   } = useGetBranchCodes();
+  const disabledClass =
+    "relative bg-red-500  border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500 bg-tremor-brand-secondary";
+  const [errMsg, setErrMsg] = useState("");
 
   const { banks, setBanks } = useHandleBanksData(banksData, banksIsSuccess);
   const { branches, setBranches } = useHandleBranchData(
@@ -164,6 +168,24 @@ const ModalForm = ({
         getAccountDetails(e?.target?.value);
       }, 1500);
     }
+  };
+  const handleKeyUpEmail = (e: string, handleChange: any) => {
+    if (e?.includes("@")) {
+      setNamePending(true);
+      setTimeout(async () => {
+        const result: { accountNo: string; name: string } | null =
+          await getAccountNumberByEmail(e);
+        setErrMsg(!result ? "No user found with the provided email." : "");
+        result && setName(result.name);
+        result &&
+          result.accountNo &&
+          handleChange({
+            target: { name: "receiverID", value: result.accountNo },
+            defaultPrevented: true,
+          });
+      }, 1500);
+    }
+    setNamePending(false);
   };
   return (
     <div className="relative bg-white rounded-lg shadow dark:bg-gray-700">
@@ -185,44 +207,38 @@ const ModalForm = ({
       <Formik
         initialValues={data.reduce((acc, curr) => ({ ...acc, ...curr }), {})}
         validationSchema={schema}
-        onSubmit={async (values, { resetForm }) => {
+        onSubmit={async (values) => {
           onSubmit(
             values,
-            resetForm,
             subHeader,
             userr,
             userBalance as { chi: number; momo: number; airtime: number },
             showToastError,
             submitFn,
-            setEmail,
-            setName,
-            currentExchangeRate,
-            setBanks,
-            setBranches
+            currentExchangeRate
           );
         }}
       >
         {({ handleChange, values }) => (
-          <Form className="p-4 md:p-5">
+          <Form className="p-4 md:p-5 min-h-[40vh]">
             {data.map((field) =>
               Object.entries(field).map(([key, value]) => {
                 if (
                   showBranchCodeComponent(key, values["country"] as string) ||
-                  showFullNameComponent(key, values["accountNumber"] as string)
+                  showFullNameComponent(
+                    key,
+                    values["accountNumber"] as string
+                  ) ||
+                  (key === "receiverID" && subHeader === "Send Fund via Email")
                 ) {
                   return null;
                 }
-                if (
-                  showFullNameComponentNG(
-                    key,
-                    values["accountNumber"] as string,
-                    values["country"] as string
-                  )
-                ) {
-                  setNamePending(true);
-                  setTimeout(() => {
-                    setNamePending(false);
-                  }, 2000);
+                if (loading) {
+                  return (
+                    <span className="absolute top-1/3 w-[90%] flex flex-row items-center justify-center h-[10vh] text-tremor-brand-primary text-lg ">
+                      <Loader />
+                    </span>
+                  );
                 }
                 return (
                   <div key={key} className="grid gap-4 mb-4 grid-cols-2">
@@ -231,14 +247,16 @@ const ModalForm = ({
                         htmlFor={key}
                         className="capitalize block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                       >
-                        {getKeyName(key, userr)}
+                        {getKeyName(key, userr)}{" "}
                       </label>
                       <Field
                         id={key}
                         disabled={
                           (isSendFundViaWallet(subHeader) &&
                             isEmailOrName(key)) ||
-                          isFullnameAndNG(key, values["country"] as string)
+                          isSendFundViaEmail(subHeader, key) ||
+                          isFullnameAndNG(key, values["country"] as string) ||
+                          loading
                         }
                         name={key}
                         placeholder={value}
@@ -253,7 +271,17 @@ const ModalForm = ({
                           key,
                           values["country"] as string
                         )}
-                        onKeyUp={isReceiverID(key) ? handleKeyUp : undefined}
+                        onKeyUp={
+                          isReceiverID(key)
+                            ? handleKeyUp
+                            : subHeader === "Send Fund via Email" &&
+                                key === "email"
+                              ? handleKeyUpEmail(
+                                  values["email"] as string,
+                                  handleChange
+                                )
+                              : undefined
+                        }
                         onKeyDown={isReceiverID(key) ? handleKeyUp : undefined}
                         handleChange={handleChange}
                         options={optionsToUse(key, branches, banks)}
@@ -267,9 +295,15 @@ const ModalForm = ({
                           CurrencyInput,
                           SelectInput
                         )}
-                        className={classNameToUse(key, subHeader)}
+                        className={
+                          loading
+                            ? disabledClass
+                            : classNameToUse(key, subHeader, loading)
+                        }
                       />
-
+                      {key === "email" && (
+                        <span className="text-xs text-red-400">{errMsg}</span>
+                      )}
                       {isFormLoading(
                         walletPending,
                         banksPending,
@@ -277,7 +311,12 @@ const ModalForm = ({
                         namePending,
                         subHeader,
                         values["receiverID"] as string
-                      ) ? (
+                      ) ||
+                      (subHeader === "Send Fund via Email" &&
+                        name === "" &&
+                        values["receiverID"] === "" &&
+                        values["email"] &&
+                        (values["email"] as string).includes("@")) ? (
                         <span className="absolute top-1/2 right-1/2 text-tremor-brand-primary text-lg ">
                           <Loader />
                         </span>
@@ -293,29 +332,31 @@ const ModalForm = ({
                 );
               })
             )}
-            <button
-              type="submit"
-              disabled={loading}
-              className="text-white inline-flex items-center bg-tremor-brand-primary hover:tremor-brand-primary focus:ring-4 focus:outline-none focus:ring-tremor-brand-primary font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-tremor-brand-primary dark:hover:bg-tremor-brand-primary dark:focus:ring-tremor-brand-primary"
-            >
-              {loading ? (
-                <Loader />
-              ) : (
-                <>
-                  <GrSend className="me-1 -ms-1 w-5 h-5 text-white" />
-                  <span>
-                    {subHeader.includes("Send Fund") ? (
-                      <SendFundMessage
-                        currency={userr.prefferedCurrency as string}
-                        amountValue={values?.amount as string}
-                      />
-                    ) : (
-                      "Create Link"
-                    )}
-                  </span>
-                </>
-              )}
-            </button>
+            {!loading && (
+              <button
+                type="submit"
+                disabled={loading}
+                className="text-white inline-flex items-center bg-tremor-brand-primary hover:tremor-brand-primary focus:ring-4 focus:outline-none focus:ring-tremor-brand-primary font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-tremor-brand-primary dark:hover:bg-tremor-brand-primary dark:focus:ring-tremor-brand-primary"
+              >
+                {loading ? (
+                  <Loader />
+                ) : (
+                  <>
+                    <GrSend className="me-1 -ms-1 w-5 h-5 text-white" />
+                    <span>
+                      {subHeader.includes("Send Fund") ? (
+                        <SendFundMessage
+                          currency={userr.prefferedCurrency as string}
+                          amountValue={values?.amount as string}
+                        />
+                      ) : (
+                        "Create Link"
+                      )}
+                    </span>
+                  </>
+                )}
+              </button>
+            )}
           </Form>
         )}
       </Formik>

@@ -2,8 +2,6 @@ import { showToastError, showToastSuccess } from "@/app/lib/toast";
 import { UserProps } from "../constants/types";
 export const onSubmit = async (
   values: any,
-
-  resetForm: () => void,
   subHeader: string,
   userr: { accountNo?: string; email?: string; prefferedCurrency?: string },
   userBalance: { chi: number },
@@ -14,20 +12,8 @@ export const onSubmit = async (
     payeeID?: string;
     email?: string;
   }) => void,
-  setEmail: (email: string) => void,
-  setName: (name: string) => void,
-  currentExchangeRate: () => number,
-  setBanks: (banks: object[]) => void,
-  setBranches: (branches: object[]) => void
+  currentExchangeRate: () => number
 ) => {
-  const resetState = () => {
-    setEmail("");
-    setName("");
-    setBanks([]);
-    setBranches([]);
-    resetForm();
-  };
-
   const dynamicAmount =
     userr.prefferedCurrency === "USD"
       ? values.amount
@@ -47,7 +33,8 @@ export const onSubmit = async (
   ) {
     showToastError("Oops! you have insufficient balance");
   } else if (
-    subHeader === "Send Fund via Wallet" &&
+    (subHeader === "Send Fund via Wallet" ||
+      subHeader === "Send Fund via Email") &&
     userBalance &&
     userBalance?.chi >= dynamicAmount
   ) {
@@ -56,21 +43,17 @@ export const onSubmit = async (
       receiverID: values.receiverID,
       payeeID: userr.accountNo,
     });
-
-    resetState();
   } else if (
     subHeader === "Send Fund to Bank" &&
     userBalance &&
     userBalance?.chi >= dynamicAmount
   ) {
     submitFn(values);
-    resetState();
   } else {
     submitFn({
       amount: dynamicAmount,
       email: values.email,
     });
-    resetState();
   }
 };
 

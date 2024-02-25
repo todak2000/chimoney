@@ -113,7 +113,6 @@ export type FormData = {
 }[];
 
 export interface FinalModalProps {
-  next: string;
   data: finalFormDataProps;
   subHeader: string;
   currentExchangeRate: () => number;
