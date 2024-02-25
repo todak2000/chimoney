@@ -1,6 +1,6 @@
 # Chimoney
 
-    "A streamlined app that allows users to securely create and manage their accounts, send and receive payments, and view their transaction history, all integrated with Chimoney’s API and deployed live for easy access",
+A streamlined app that allows users to securely create and manage their accounts, send and receive payments, and view their transaction history, all integrated with Chimoney’s API and deployed live for easy access.
 
 ![Image chimoney](public/chimoney.png)
 
@@ -33,17 +33,17 @@ This project showcases a personal finance dashboard application built using mode
 
 1. Landing Page
 
-- Signup/Signin seamlessly using google auth only
+- Signup/Signin/Signout seamlessly using Firebase/Google authentication only
 
 2. Dashboard/Overview
 
-- View their dashboard availing them their wallet balances (chi, momo and airtime).
-- View a AreaChart Trend of their finances for a succint overview
+- View their dashboard availing them of their wallet balances (chi, momo and airtime).
+- View an AreaChart Trend of their finances for a succinct overview
 - Send money to both chimoney users and non-users alike via
   - P2P - directly via wallet IDs (users)
   - Email just like paypal (users)
   - Bank account transfer from wallet (non-users)
-- Recieve money from both chimoney users and non-users alike via
+- Receive money from both chimoney users and non-users alike via
   - Payment link - Generate payment link for clients to pay into your chimoney wallet
   - Users themselves can top-up their wallet balance via Credit/Debit Card
 - Navigate to `Transactions` to view their transactions
@@ -53,7 +53,7 @@ This project showcases a personal finance dashboard application built using mode
 3. Transaction
 
 - View their transactions as well paginated.
-- Click on NEXT/PREVIOUS appriopriately to see subsequent transactions
+- Click on NEXT/PREVIOUS appropriately to see subsequent transactions
 - Filter transactions based on predefined options `CHI`, `MOMO`, `AIRTIME`, `Debit`, and `Credit`
 
 4. Profile (Additional Features)
@@ -64,13 +64,11 @@ This project showcases a personal finance dashboard application built using mode
 
 5. Currency Switch (Additional Features)
 
-- Switch curreny between NGN and USD based on preference and all transaction data changes accordingly. i.e. if one chose NGN, transactions, payment and other money realted actions/events will be rendered to the user in NGN howbeit, default currency is the USD.
+- Switch currency between NGN and USD based on preference and all transaction data changes accordingly. i.e. if one chose NGN, transactions, payment, account balances will be rendered to the user in NGN howbeit, default currency is the USD.
 
 6. Theme Switch (Additional Features)
 
 - Toggle between light `☀️` and dark `🌙` mode based on their preferences and seamless user experience
-- View User profile Page
-- Switch between USD and NGN with live interative Chart and updated Transaction
 
 ## Getting Started
 
@@ -80,7 +78,7 @@ These instructions will get you a copy of the project up and running on your loc
 
 - Node.js v20
 - npm/yarn
-- Firebase account which allows you create a firebase project. see [setup here](https://firebase.google.com/codelabs/firebase-nextjs#0)
+- Firebase account which allows you to create a Firebase project. see [setup here](https://firebase.google.com/codelabs/firebase-nextjs#0)
 - TypeScript
 - Chimoney Sandbox Developer account which allows you to create and access the enpoints with provided Keys/secrets. see [details here](https://chimoney.readme.io/reference/introduction)
 
@@ -130,11 +128,11 @@ The website will be available at `http://localhost:3000`.
 
 ## API Endpoints
 
-Being a NextJS app which allows for both client and server side development, endpoints required to create, read, delete, update respective features can be found in `src/app/api` folder. Basically, Firebase (Database and Authentication), React Query (fetching, caching, and updating data) was used to build performant endpoints from chimoney - see documentation here `https://api-v2-sandbox.chimoney.io` . There are two subfolders `auth` and `other` which are apis for firebase google authentication and chimoney respectively. These endpoints were most used in different customized hooks here `src/app/hooks/index.ts`. For instance, the `useGetUserChimoneyDetails` hook referenced the `getAccountDetails` endpoint which allows for seamless querying of user data from chimoney while cross checking with firebase database as well - see `useAuthStateChange` for details.
+Being a NextJS app that allows for both client and server-side development, endpoints required to create, read, delete, and update respective features can be found in `src/app/api` folder. Basically, Firebase (Database and Authentication), React Query (fetching, caching, and updating data) were used to build performant endpoints from chimoney - see documentation here `https://api-v2-sandbox.chimoney.io` . There are two subfolders `auth` and `other` which are apis for firebase google authentication and chimoney respectively. These endpoints were most used in different customized hooks here `src/app/hooks/index.ts`. For instance, the `useGetUserChimoneyDetails` hook referenced the `getAccountDetails` endpoint which allows for seamless querying of user data from chimoney while cross-checking with Firebase database as well - see `useAuthStateChange` for details.
 
 ## CI/CD and Deployment
 
-This app was set up using github actions which initiates deployment process by running test, build artifacts and deploying directly on vercel. So every PR to the `main` branch triggers the pipeline. see `.github/workflows/main.yml` for details.
+This app was set up using Github actions which initiates the deployment process by running test, build artifacts, and deploying directly on Vercel. So every PR to the `main` branch triggers the pipeline. see `.github/workflows/main.yml` for details.
 
 ## License
 
