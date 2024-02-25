@@ -9,7 +9,6 @@ import OptionList from "@/app/components/Modal/OptionList";
 import Form from "@/app/components/Modal/Form";
 import {
   useCreatePaymentLink,
-  useSendByEmail,
   useSendP2P,
   useSendToBank,
   useUserBalance,
@@ -59,13 +58,7 @@ const SelectModal = ({
     data: bankData,
     error: bankError,
   } = useSendToBank();
-  const {
-    handleSendByEmail,
-    isPending: emailPending,
-    isError: emailIsError,
-    data: emailData,
-    error: emailError,
-  } = useSendByEmail();
+
   const {
     handleP2P,
     isPending: p2pIsPending,
@@ -172,16 +165,12 @@ const SelectModal = ({
   };
 
   useEffect(() => {
-    handleResponse(emailData, emailError, emailIsError, "email", dispatch);
     handleResponse(p2pData, p2pError, p2pIsError, "p2p", dispatch);
-
+    handleResponse(p2pData, p2pError, p2pIsError, "email", dispatch);
     handleResponse(linkData, linkError, linkIsError, "link", dispatch);
     handleResponse(linkData, linkError, linkIsError, "card", dispatch);
     handleResponse(bankData, bankError, bankIsError, "bank", dispatch);
   }, [
-    emailData,
-    emailError,
-    emailIsError,
     p2pData,
     p2pError,
     p2pIsError,
@@ -196,9 +185,8 @@ const SelectModal = ({
   const getLoadingStatus = (next: string) => {
     switch (next) {
       case "p2p":
-        return p2pIsPending;
       case "email":
-        return emailPending;
+        return p2pIsPending;
       case "link":
       case "card":
         return linkIsPending;
@@ -212,9 +200,8 @@ const SelectModal = ({
   const getSubmitFunction = (next: string) => {
     switch (next) {
       case "p2p":
-        return handleP2P;
       case "email":
-        return handleSendByEmail;
+        return handleP2P;
       case "link":
       case "card":
         return handlePaymentLink;
@@ -252,7 +239,6 @@ const SelectModal = ({
       case "final-bank":
         return (
           <FinalForm
-            next={next}
             data={finalResultData as finalFormDataProps}
             currentExchangeRate={currentExchangeRate}
             subHeader={

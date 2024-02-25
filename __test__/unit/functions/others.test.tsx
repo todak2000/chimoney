@@ -24,30 +24,18 @@ describe("onSubmit function", () => {
     };
     const userBalance = { chi: 20 };
     const submitFn = jest.fn();
-    const setEmail = jest.fn();
-    const setName = jest.fn();
-    const setBanks = jest.fn();
-    const setBranches = jest.fn();
-    const dispatch = jest.fn();
     const currentExchangeRate = () => 1;
-    const resetForm = jest.fn();
     (useSelector as unknown as jest.Mock).mockImplementation((callback) => {
       return callback({ userr });
     });
     await onSubmit(
       values,
-      resetForm,
       "Send Fund",
       userr,
       userBalance,
       showToastError,
       submitFn,
-      setEmail,
-      setName,
-      currentExchangeRate,
-      setBanks,
-      setBranches,
-      dispatch
+      currentExchangeRate
     );
 
     expect(showToastError).toHaveBeenCalledWith(

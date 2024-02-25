@@ -4,8 +4,18 @@ import { auth, db, provider } from "@/firebase";
 import { httpRequest } from "@/app/lib/httpRequest";
 import { Dispatch } from "react";
 import { setIsLoading } from "@/app/store";
-import { deleteDoc, doc, getDoc, setDoc } from "@firebase/firestore";
+import {
+  collection,
+  deleteDoc,
+  doc,
+  getDoc,
+  getDocs,
+  query,
+  setDoc,
+  where,
+} from "@firebase/firestore";
 import { ISignup } from "@/app/constants/types";
+import { showToastError } from "@/app/lib/toast";
 export const baseURL = `${process.env.NEXT_PUBLIC_CHIMONEY_URL}/v0.2`;
 
 // create chimoney sub-account
@@ -174,5 +184,26 @@ export const handleDeleteUser = async (userId: string) => {
       status: err.code || 500,
       message: err.message || "An unknown error occurred",
     };
+  }
+};
+
+export const getAccountNumberByEmail = async (email: string) => {
+  try {
+    const usersCollection = collection(db, "Users");
+    const q = query(usersCollection, where("email", "==", email));
+    const querySnapshot = await getDocs(q);
+
+    if (querySnapshot.empty) {
+      console.log("No user found with the provided email.");
+      return null;
+    }
+    const userDoc = querySnapshot.docs[0];
+    const accountNo = userDoc.data().accountId;
+    const name = userDoc.data().name;
+
+    return { accountNo, name };
+  } catch (error) {
+    console.error("Error fetching user data:", error);
+    return null;
   }
 };
