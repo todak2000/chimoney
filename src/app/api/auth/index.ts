@@ -228,7 +228,6 @@ export const handleEmailAuth = async (
         ? await createUserWithEmailAndPassword(auth, data.email, data.password)
         : await signInWithEmailAndPassword(auth, data.email, data.password);
 
-    console.log(res, "auth sign");
     const update =
       type === "signup" &&
       (await updateProfile(res.user, { displayName: data.name }));
