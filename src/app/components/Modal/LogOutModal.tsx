@@ -3,14 +3,24 @@ import React from "react";
 import { cn } from "@/app/lib/cn";
 import Loader from "../loader/Loader";
 import { LogoutModalProps } from "@/app/constants/types";
+import { handleGoogleSignOut } from "@/app/api/auth";
+import { showToastError, showToastSuccess } from "@/app/lib/toast";
 
 const LogOutModal = ({
   open,
   setOpen,
   text,
-  callBack,
   loading,
+  callBack,
 }: LogoutModalProps) => {
+  const handleSignOut = async () => {
+    const res = await handleGoogleSignOut();
+    if (res.status === 200) {
+      showToastSuccess("You are logged out!");
+    } else {
+      showToastError(res.message);
+    }
+  };
   return (
     <div
       tabIndex={-1}
@@ -70,7 +80,11 @@ const LogOutModal = ({
               data-modal-hide="popup-modal"
               type="button"
               disabled={loading}
-              onClick={callBack}
+              onClick={
+                text === "😔 Are you sure you want to Delete your Account?"
+                  ? callBack
+                  : handleSignOut
+              }
               className="text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center"
             >
               {loading ? <Loader /> : "Yes, I'm sure"}

@@ -228,6 +228,7 @@ export const handleEmailAuth = async (
         ? await createUserWithEmailAndPassword(auth, data.email, data.password)
         : await signInWithEmailAndPassword(auth, data.email, data.password);
 
+    console.log(res, "auth sign");
     const update =
       type === "signup" &&
       (await updateProfile(res.user, { displayName: data.name }));
@@ -264,12 +265,64 @@ export const handleEmailAuth = async (
       status: 200,
       message: message,
     };
-  } catch (err: any) {
+  } catch (error: any) {
+    console.log(error.message, "aut error---");
+    let status: number;
+    let message: string;
     dispatch(setIsLoading(false));
+    switch (error.message) {
+      case "Firebase: Error (auth/user-not-found).":
+        status = 404;
+        message = "Email does not exist in our Database. Please register 😞";
+        break;
+      case "Firebase: Error (auth/invalid-credential).":
+        status = 401;
+        message = "Invalid credentials (Email/password is incorrect)! 😞";
+        break;
+      case "Firebase: Error (auth/email-already-exists).":
+      case "Firebase: Error (auth/email-already-in-use).":
+        status = 409;
+        message = "Email already exists, please try another email! 😞";
+        break;
+      default:
+        status = 500;
+        message = "Oops, something went wrong! 😞";
+        break;
+    }
+
     return {
-      status: 501,
-      message: "Oops, something went wrong! 😞",
-      error: err?.message,
+      status,
+      message,
+      error: error?.message,
     };
+
+    // let status: number;
+    // let message: string;
+    // dispatch(setIsLoading(false));
+    // switch (error.message) {
+    //   case "Firebase: Error (auth/user-not-found).":
+    //     status = 400;
+    //     message ="Email does not exist in our Database. Please register 😞";
+    //     break;
+    //   case "Firebase: Error (auth/invalid-credential).":
+    //     status = 401;
+    //     message ="Invalid credentials (Email/password is incorrect)! 😞";
+    //     break;
+    //   case "Firebase: Error (auth/email-already-exists).":
+    //   case "Firebase: Error (auth/email-already-in-use).":
+    //     status = 403;
+    //     message ="Email already exist, please try another email! 😞";
+    //     break;
+    //   default:
+    //     status = 501;
+    //     message= "Oops, something went wrong! 😞",
+    //     break;
+    // }
+
+    // return {
+    //   status,
+    //   message,
+    //   error: error?.message,
+    // };
   }
 };

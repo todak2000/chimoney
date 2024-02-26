@@ -86,22 +86,6 @@ export const useAuthStateChange = () => {
   }, [onAuthStateChanged]);
 };
 
-export const useSignOut = () => {
-  const { push } = useRouter();
-
-  const handleSignOut = useCallback(async () => {
-    const res = await handleGoogleSignOut();
-    if (res.status === 200) {
-      push("/");
-      showToastSuccess("You are logged out!");
-    } else {
-      showToastError(res.message);
-    }
-  }, [push]);
-
-  return handleSignOut;
-};
-
 export const useAccountData = () => {
   const dispatch = useDispatch();
   const userr = useSelector(user);

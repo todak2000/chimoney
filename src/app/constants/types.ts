@@ -202,7 +202,7 @@ export interface LogoutModalProps {
   open: boolean;
   text: string;
   loading?: boolean;
-  callBack: () => void;
+  callBack?: () => void;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 export interface ModalWrapperProps {

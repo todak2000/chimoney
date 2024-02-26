@@ -1,8 +1,8 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { IoClose } from "react-icons/io5";
-import { FaCirclePlay } from "react-icons/fa6";
+import { FaCirclePlay, FaRegEye, FaRegEyeSlash } from "react-icons/fa6";
 
 import { cn } from "../../lib/cn";
 
@@ -40,6 +40,11 @@ const Onboarding = ({
     },
   ];
 
+  const [showPassword, setShowPassword] = useState(false);
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
   return (
     <div
       id="crypto-modal"
@@ -103,6 +108,7 @@ const Onboarding = ({
               const res = await handleEmailAuth(dispatch, data, open);
               if (res && res.status === 200) {
                 showToastSuccess(res.message);
+                setOpen("");
                 push("/dashboard");
               } else {
                 showToastError(res.message);
@@ -111,7 +117,7 @@ const Onboarding = ({
             }}
           >
             {({ handleChange, values, submitForm }) => (
-              <Form className="max-w-sm mx-auto pb-8">
+              <Form className="max-w-sm mx-auto p-4 md:p-0 md:pb-8">
                 {formData.map((field) =>
                   Object.entries(field).map(([key, value]) => {
                     if (
@@ -119,6 +125,46 @@ const Onboarding = ({
                       (key === "confirmPassword" || key === "name")
                     ) {
                       return null;
+                    }
+                    if (key === "password" || key === "confirmPassword") {
+                      return (
+                        <div className="mb-5 relative" key={key}>
+                          <label
+                            htmlFor={key}
+                            className="capitalize block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                          >
+                            {key}
+                          </label>
+                          <div className="flex flex-row relative">
+                            <Field
+                              id={key}
+                              type={showPassword ? "text" : "password"}
+                              name={key}
+                              onChange={handleChange}
+                              value={(values as FormikValues)[key]}
+                              className="bg-gray-50 border border-gray-300 relative text-gray-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-indigo-500 dark:focus:border-indigo-500"
+                              required
+                            />
+                            {showPassword ? (
+                              <FaRegEyeSlash
+                                className="text-gray-500 absolute bottom-3 right-2 cursor-pointer"
+                                onClick={togglePasswordVisibility}
+                              />
+                            ) : (
+                              <FaRegEye
+                                className="text-gray-500 absolute bottom-3 right-2 cursor-pointer"
+                                onClick={togglePasswordVisibility}
+                              />
+                            )}
+                          </div>
+
+                          <ErrorMessage
+                            name={key}
+                            className="text-red-400  text-xs"
+                            component="div"
+                          />
+                        </div>
+                      );
                     }
                     return (
                       <div className="mb-5" key={key}>
@@ -131,18 +177,21 @@ const Onboarding = ({
                         <Field
                           id={key}
                           type={
-                            key === "email"
-                              ? "email"
-                              : key === "name"
-                                ? "text"
-                                : "password"
+                            key === "password" && showPassword
+                              ? "text"
+                              : key === "password" && !showPassword
+                                ? "password"
+                                : key === "name"
+                                  ? "name"
+                                  : key
                           }
                           name={key}
                           onChange={handleChange}
                           value={(values as FormikValues)[key]}
-                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-indigo-500 dark:focus:border-indigo-500"
+                          className="bg-gray-50 border border-gray-300 relative text-gray-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-indigo-500 dark:focus:border-indigo-500"
                           required
                         />
+
                         <ErrorMessage
                           name={key}
                           className="text-red-400  text-xs"
@@ -156,9 +205,15 @@ const Onboarding = ({
                 <button
                   type="submit"
                   onClick={submitForm}
-                  className="text-white bg-indigo-700 hover:bg-indigo-800 focus:ring-4 focus:outline-none focus:ring-indigo-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-indigo-600 dark:hover:bg-indigo-700 dark:focus:ring-indigo-800"
+                  className="text-white bg-tremor-brand-primary hover:bg-indigo-400 focus:ring-4 focus:outline-none focus:ring-indigo-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-tremor-brand-primary dark:hover:bg-indigo-400 dark:focus:ring-indigo-800"
                 >
-                  {isLoadingg ? <Loader /> : "Submit"}
+                  {isLoadingg ? (
+                    <span className="flex flex-row items-center justify-center">
+                      <Loader />
+                    </span>
+                  ) : (
+                    "Submit"
+                  )}
                 </button>
               </Form>
             )}

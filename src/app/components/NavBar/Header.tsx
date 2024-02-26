@@ -8,7 +8,7 @@ import { setTabIndex, tabIndex, user } from "@/app/store";
 import { Icon } from "@tremor/react";
 import Image from "next/image";
 import { IoIosPower } from "react-icons/io";
-import { useAccountData, useSignOut } from "@/app/hooks";
+import { useAccountData } from "@/app/hooks";
 import LogOutModal from "@/app/components/Modal/LogOutModal";
 import Link from "next/link";
 import { cn } from "@/app/lib/cn";
@@ -20,7 +20,7 @@ const Header: NextPage = () => {
   const tabIndexx = useSelector(tabIndex);
   const [openModal, setOpenModal] = useState<boolean>(false);
   useAccountData();
-  const out = useSignOut();
+
   const arr = ["Overview", "Transactions"];
 
   return (
@@ -103,7 +103,6 @@ const Header: NextPage = () => {
       <LogOutModal
         open={openModal}
         setOpen={setOpenModal}
-        callBack={out}
         text="Are you sure you want to Signout?"
       />
     </header>

@@ -15,7 +15,7 @@ import { Icon } from "@tremor/react";
 import Image from "next/image";
 import { IoIosPower } from "react-icons/io";
 import SkeletonLoader from "@/app/components/SkeletonLoader";
-import { useAuthStateChange, useSignOut } from "@/app/hooks";
+import { useAuthStateChange } from "@/app/hooks";
 import LogOutModal from "@/app/components/Modal/LogOutModal";
 import Onboarding from "../Onboarding/Onboarding";
 
@@ -27,7 +27,6 @@ const NavBar: NextPage = () => {
   const loading = useSelector(isLoading);
   const userr = useSelector(user);
 
-  const out = useSignOut();
   const navBarArr: INavBar[] = [
     {
       id: key(),
@@ -160,7 +159,6 @@ const NavBar: NextPage = () => {
       <LogOutModal
         open={openModal}
         setOpen={setOpenModal}
-        callBack={out}
         text="Are you sure you want to Signout?"
       />
 
