@@ -283,7 +283,7 @@ const ModalForm = ({
                               : undefined
                         }
                         onKeyDown={isReceiverID(key) ? handleKeyUp : undefined}
-                        handleChange={handleChange}
+                        onChange={handleChange}
                         options={optionsToUse(key, branches, banks)}
                         onSelect={onSelectToUse(
                           key,

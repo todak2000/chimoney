@@ -16,7 +16,7 @@ jest.mock("react-redux", () => ({
   useSelector: jest.fn(),
 }));
 
-describe("Header", () => {
+describe("NavBar", () => {
   const mockUser = {
     name: "Test User",
     email: "testuser@example.com",
@@ -54,7 +54,7 @@ describe("Header", () => {
     });
 
     expect(await screen.findByTestId("logo")).toBeInTheDocument();
-    expect(await screen.findAllByTestId("link")).toHaveLength(3);
+    expect(await screen.findAllByTestId("link")).toHaveLength(5);
   });
 
   it("renders without crashing with user", async () => {
@@ -75,7 +75,7 @@ describe("Header", () => {
     textLinks.forEach(async (title: string) => {
       expect(await screen.findByText(title)).toBeInTheDocument();
     });
-
+    expect(await screen.findByTestId("logo")).toBeInTheDocument();
     expect(await screen.findByTestId("user")).toBeInTheDocument();
     expect(await screen.findByTestId("logout")).toBeInTheDocument();
     expect(await screen.findAllByTestId("link")).toHaveLength(4);

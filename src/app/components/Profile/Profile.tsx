@@ -21,6 +21,7 @@ import { useDeleteAccountDetails, useUpdateAccountDetails } from "@/app/hooks";
 import { showToastError, showToastSuccess } from "@/app/lib/toast";
 import { isCopyClickable } from "@/app/constants/modal";
 import Image from "next/image";
+import { IoPersonCircle } from "react-icons/io5";
 const Profile = () => {
   const userr = useSelector(user);
   const [edit, setEdit] = useState<boolean>(false);
@@ -97,14 +98,18 @@ const Profile = () => {
     <section className="w-full space-y-4  flex flex-col md:flex-row items-center justify-evenly">
       <div className="w-full max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
         <div className="flex flex-col items-center py-10">
-          <Image
-            className="w-24 h-24 mb-3 rounded-full shadow-lg"
-            src={userr.photo}
-            alt="Bonnie image"
-            width={100}
-            height={3100}
-            priority
-          />
+          {userr.photo ? (
+            <Image
+              className="w-24 h-24 mb-3 rounded-full shadow-lg"
+              src={userr?.photo}
+              alt="User profile image"
+              width={100}
+              height={100}
+              priority
+            />
+          ) : (
+            <IoPersonCircle className="w-24 h-24 mb-3 text-gray-500 dark:invert" />
+          )}
 
           <h5 className="mb-1 text-xl font-medium text-gray-900 dark:text-white">
             {userr.name}

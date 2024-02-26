@@ -1,4 +1,12 @@
-import { User, deleteUser, signInWithPopup, signOut } from "firebase/auth";
+import {
+  User,
+  createUserWithEmailAndPassword,
+  deleteUser,
+  signInWithEmailAndPassword,
+  signInWithPopup,
+  signOut,
+  updateProfile,
+} from "firebase/auth";
 
 import { auth, db, provider } from "@/firebase";
 import { httpRequest } from "@/app/lib/httpRequest";
@@ -14,7 +22,7 @@ import {
   setDoc,
   where,
 } from "@firebase/firestore";
-import { ISignup } from "@/app/constants/types";
+import { ISignup, OnboardingProps } from "@/app/constants/types";
 import { showToastError } from "@/app/lib/toast";
 export const baseURL = `${process.env.NEXT_PUBLIC_CHIMONEY_URL}/v0.2`;
 
@@ -205,5 +213,63 @@ export const getAccountNumberByEmail = async (email: string) => {
   } catch (error) {
     console.error("Error fetching user data:", error);
     return null;
+  }
+};
+
+export const handleEmailAuth = async (
+  dispatch: Dispatch<any>,
+  data: OnboardingProps,
+  type: string
+) => {
+  try {
+    dispatch(setIsLoading(true));
+    const res: any =
+      type === "signup"
+        ? await createUserWithEmailAndPassword(auth, data.email, data.password)
+        : await signInWithEmailAndPassword(auth, data.email, data.password);
+
+    const update =
+      type === "signup" &&
+      (await updateProfile(res.user, { displayName: data.name }));
+
+    const userData = {
+      name: res?.user?.displayName as string,
+      email: res?.user?.email as string,
+      firstName: res?.user?.displayName.split(" ")[0],
+      lastName:
+        res?.user?.displayName.split(" ")[1] ??
+        res?.user?.displayName.split(" ")[0],
+      meta: {
+        userId: res?.user?.uid, //google uid
+        photo: res?.user?.photoURL ?? "",
+      },
+    };
+    const userAuthRes = await createAccount(userData);
+
+    if (!userAuthRes) {
+      throw new Error("Failed to create account");
+    }
+
+    await handleFBUser({
+      ...userData,
+      accountId: userAuthRes.status === "success" ? userAuthRes?.data?.id : "",
+    });
+    const message =
+      userAuthRes.status === "error"
+        ? `Welcome back, ${res?.user?.displayName}! your login was successful`
+        : `${res?.user?.displayName}! your registration was successful. You will be redirected shortly`;
+
+    dispatch(setIsLoading(false));
+    return {
+      status: 200,
+      message: message,
+    };
+  } catch (err: any) {
+    dispatch(setIsLoading(false));
+    return {
+      status: 501,
+      message: "Oops, something went wrong! 😞",
+      error: err?.message,
+    };
   }
 };

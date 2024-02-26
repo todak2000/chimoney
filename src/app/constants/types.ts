@@ -8,9 +8,14 @@ export interface SvgProps {
 export interface INavBar {
   id: string;
   text: string;
-  url: string;
+  url?: string;
+  callback?: () => void;
 }
-
+export interface OnboardingProps {
+  email: string;
+  password: string;
+  name?: string;
+}
 export interface ButtArrProps {
   id: string;
   title: string;

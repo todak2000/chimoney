@@ -12,6 +12,7 @@ import { useAccountData, useSignOut } from "@/app/hooks";
 import LogOutModal from "@/app/components/Modal/LogOutModal";
 import Link from "next/link";
 import { cn } from "@/app/lib/cn";
+import { IoPersonCircle } from "react-icons/io5";
 import CurrencySwitch from "./CurrencySwitch";
 const Header: NextPage = () => {
   const dispatch = useDispatch();
@@ -68,17 +69,21 @@ const Header: NextPage = () => {
           )}
           onClick={() => dispatch(setTabIndex(2))}
         >
-          <Image
-            src={userr?.photo}
-            alt="User photo"
-            className={cn("mr-1 bg-gray-300 rounded-full p-[3px]", {
-              "bg-white p-[0px]": tabIndexx === 2,
-              "bg-gray-300 p-[3px]": tabIndexx !== 2,
-            })}
-            width={30}
-            height={30}
-            priority
-          />
+          {userr?.photo ? (
+            <Image
+              src={userr?.photo}
+              alt="User photo"
+              className={cn("mr-1 bg-gray-300 rounded-full p-[3px]", {
+                "bg-white p-[0px]": tabIndexx === 2,
+                "bg-gray-300 p-[3px]": tabIndexx !== 2,
+              })}
+              width={30}
+              height={30}
+              priority
+            />
+          ) : (
+            <IoPersonCircle className="size-[30px] text-gray-500 m-1" />
+          )}
           <p
             className={cn("text-xs text-black dark:invert", {
               "text-white dark:invert-0": tabIndexx === 2,

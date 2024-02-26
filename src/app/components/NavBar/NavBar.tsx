@@ -2,7 +2,7 @@
 import { NextPage } from "next";
 import Link from "next/link";
 import React, { useState } from "react";
-import { IoClose } from "react-icons/io5";
+import { IoClose, IoPersonCircle } from "react-icons/io5";
 import { FaCirclePlay } from "react-icons/fa6";
 import { INavBar } from "../../constants/types";
 import { cn } from "../../lib/cn";
@@ -17,38 +17,53 @@ import { IoIosPower } from "react-icons/io";
 import SkeletonLoader from "@/app/components/SkeletonLoader";
 import { useAuthStateChange, useSignOut } from "@/app/hooks";
 import LogOutModal from "@/app/components/Modal/LogOutModal";
-const navBarArr: INavBar[] = [
-  {
-    id: key(),
-    text: "Pricing",
-    url: "/",
-  },
-  {
-    id: key(),
-    text: "Download",
-    url: "/",
-  },
-  {
-    id: key(),
-    text: "Integration",
-    url: "/",
-  },
-  {
-    id: key(),
-    text: "Dashboard",
-    url: "/dashboard",
-  },
-];
+import Onboarding from "../Onboarding/Onboarding";
+
 const NavBar: NextPage = () => {
   const [showHamburger, setShowHamburger] = useState<boolean>(true);
   useAuthStateChange();
   const [openModal, setOpenModal] = useState<boolean>(false);
+  const [openOnboarding, setOpenOnboarding] = useState<string>("");
   const loading = useSelector(isLoading);
   const userr = useSelector(user);
 
   const out = useSignOut();
-
-  const arr = userr.name !== "" ? navBarArr : navBarArr.slice(0, 3);
+  const navBarArr: INavBar[] = [
+    {
+      id: key(),
+      text: "Pricing",
+      url: "/",
+    },
+    {
+      id: key(),
+      text: "Download",
+      url: "/",
+    },
+    {
+      id: key(),
+      text: "Integration",
+      url: "/",
+    },
+    {
+      id: key(),
+      text: "Register",
+      callback: () => setOpenOnboarding("signup"),
+    },
+    {
+      id: key(),
+      text: "Login",
+      callback: () => setOpenOnboarding("signin"),
+    },
+    {
+      id: key(),
+      text: "Dashboard",
+      url: "/dashboard",
+    },
+  ];
+  const arr =
+    userr.name !== ""
+      ? navBarArr.filter((_, i) => i !== 3 && i !== 4)
+      : navBarArr.slice(0, 5);
   return (
     <header className="h-20 flex w-full flex-row justify-between items-center">
       <div className="flex flex-row items-center" data-testid="logo">
@@ -76,12 +91,13 @@ const NavBar: NextPage = () => {
           }
         )}
       >
-        {arr.map(({ id, text, url }: INavBar) => {
+        {arr.map(({ id, text, url, callback }: INavBar) => {
           return (
             <Link
               data-testid="link"
               aria-label="navbar link"
-              href={url}
+              href={url ?? "#"}
+              onClick={callback ?? (() => null)}
               key={id}
               className={cn(
                 "px-4 py-3 hover:text-gray-500  text-black dark:invert flex-row text-xs flex justify-center items-center relative ",
@@ -113,14 +129,18 @@ const NavBar: NextPage = () => {
               </>
             ) : (
               <>
-                <Image
-                  src={userr?.photo}
-                  alt="User photo"
-                  className="mx-1 bg-gray-300 rounded-full p-[3px]"
-                  width={30}
-                  height={30}
-                  priority
-                />
+                {userr.photo ? (
+                  <Image
+                    src={userr?.photo}
+                    alt="User photo"
+                    className="mx-1 bg-gray-300 rounded-full p-[3px]"
+                    width={30}
+                    height={30}
+                    priority
+                  />
+                ) : (
+                  <IoPersonCircle className="size-[30px] text-gray-500 m-1" />
+                )}
                 <p className="text-xs text-black dark:invert">
                   {userr?.name?.split(" ")[0]}
                 </p>
@@ -143,6 +163,8 @@ const NavBar: NextPage = () => {
         callBack={out}
         text="Are you sure you want to Signout?"
       />
+
+      <Onboarding open={openOnboarding} setOpen={setOpenOnboarding} />
     </header>
   );
 };

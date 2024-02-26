@@ -57,7 +57,7 @@ export const useAuthStateChange = () => {
           const userData = {
             name: firebaseUser?.displayName as string,
             email: firebaseUser?.email as string,
-            photo: firebaseUser?.photoURL as string,
+            photo: (firebaseUser?.photoURL as string) ?? "",
             uid: firebaseUser?.uid,
             accountNo: fbDetails?.accountNo,
             phone: fbDetails?.phone,

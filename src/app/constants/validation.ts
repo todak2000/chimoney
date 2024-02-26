@@ -10,6 +10,37 @@ export const LinkSchema = Yup.object().shape({
     .required("Amount is required!"),
 });
 
+export const SigninSchema = Yup.object({
+  email: Yup.string()
+    .email("Email address must be valid")
+    .required("Email address is required"),
+  password: Yup.string()
+    .min(6, "Password must be at least 6 characters!")
+    .matches(
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d])/,
+      "Password must contain at least one of A-Z, a-z, 0-9 and a special character."
+    )
+    .required("Password is required"),
+});
+
+export const SignupSchema = Yup.object({
+  name: Yup.string()
+    .min(3, "Must be at least 3 characters")
+    .required("Name is required"),
+  email: Yup.string()
+    .email("Email address must be valid")
+    .required("Email address is required"),
+  password: Yup.string()
+    .min(6, "Password must be at least 6 characters!")
+    .matches(
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d])/,
+      "Password must contain at least one of A-Z, a-z, 0-9 and a special character."
+    )
+    .required("Password is required"),
+  confirmPassword: Yup.string()
+    .oneOf([Yup.ref("password"), ""], "Passwords must match")
+    .required("Confirm Password is required"),
+});
 export const SendSchema = Yup.object().shape({
   receiverID: Yup.string()
     .length(36, "Recipient Wallet ID address must be exactly 36 characters!")
