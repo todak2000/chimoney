@@ -191,6 +191,7 @@ export type ISignup = {
   lastName: string;
   meta: {
     userId: string; //google uid
+    photo: string;
   };
 };
 export interface OptionListProps {

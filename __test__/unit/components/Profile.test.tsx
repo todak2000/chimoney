@@ -5,12 +5,19 @@ import Profile from "@/app/components/Profile/Profile";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { faker } from "@faker-js/faker";
 import { UserProps } from "@/app/constants/types";
+import { useRouter } from "next/navigation";
 const queryClient = new QueryClient();
 jest.mock("react-redux", () => ({
   ...jest.requireActual("react-redux"),
   useSelector: jest.fn(),
 }));
 
+jest.mock("next/navigation", () => ({
+  useRouter: () => ({
+    push: jest.fn(),
+    // Add other router properties you need
+  }),
+}));
 describe("Profile", () => {
   afterEach(() => {
     jest.restoreAllMocks();

@@ -22,8 +22,10 @@ import { showToastError, showToastSuccess } from "@/app/lib/toast";
 import { isCopyClickable } from "@/app/constants/modal";
 import Image from "next/image";
 import { IoPersonCircle } from "react-icons/io5";
+import { useRouter } from "next/navigation";
 const Profile = () => {
   const userr = useSelector(user);
+  const { push } = useRouter();
   const [edit, setEdit] = useState<boolean>(false);
   const [delet, setDelet] = useState<boolean>(false);
   const dispatch = useDispatch();
@@ -53,7 +55,7 @@ const Profile = () => {
     }
     if (deleteSuccess && deleteData && deleteData.status === 200) {
       dispatch(clearUser());
-      window.location.href = "/";
+      push("/");
       showToastSuccess(deleteData.message);
     }
     if (deleteIsError || (deleteData && deleteData.status !== 200)) {

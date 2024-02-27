@@ -8,9 +8,9 @@ import { cn } from "../../lib/cn";
 
 import { ErrorMessage, Field, Form, Formik, FormikValues } from "formik";
 import { SigninSchema, SignupSchema } from "@/app/constants/validation";
-import { handleEmailAuth } from "@/app/api/auth";
+import { handleEmailAuth, handleEmailRegister } from "@/app/api/auth";
 import { useDispatch, useSelector } from "react-redux";
-import { isLoading } from "@/app/store";
+import { isLoading, setTabIndex } from "@/app/store";
 import Loader from "../loader/Loader";
 import { showToastError, showToastSuccess } from "@/app/lib/toast";
 import { useRouter } from "next/navigation";
@@ -94,25 +94,53 @@ const Onboarding = ({
             }
             validationSchema={open === "signup" ? SignupSchema : SigninSchema}
             onSubmit={async (values, { resetForm }) => {
-              const data =
-                open === "signup"
-                  ? {
-                      email: values?.email,
-                      password: values?.password,
-                      name: values?.name,
-                    }
-                  : {
-                      email: values?.email,
-                      password: values?.password,
-                    };
-              const res = await handleEmailAuth(dispatch, data, open);
-              if (res && res.status === 200) {
+              let data;
+              let res;
+              if (open === "signup") {
+                data = {
+                  email: values?.email,
+                  password: values?.password,
+                  name: values?.name,
+                };
+                res = await handleEmailRegister(dispatch, data);
+              } else {
+                data = {
+                  email: values?.email,
+                  password: values?.password,
+                };
+                res = await handleEmailAuth(dispatch, data, open);
+              }
+              if (res && (res.status === 200 || res.status === 409)) {
                 showToastSuccess(res.message);
-                setOpen("");
-                push("/dashboard");
+                setTimeout(() => {
+                  dispatch(setTabIndex(0));
+                  push("/dashboard");
+                  setOpen("");
+                }, 1000);
               } else {
                 showToastError(res.message);
               }
+              // const data =
+              //   open === "signup"
+              //     ? {
+              //         email: values?.email,
+              //         password: values?.password,
+              //         name: values?.name,
+              //       }
+              //     : {
+              //         email: values?.email,
+              //         password: values?.password,
+              //       };
+              //       //
+              // const res = await handleEmailAuth(dispatch, data, open);
+              // if (res && res.status === 200) {
+              //   showToastSuccess(res.message);
+              //   setOpen("");
+              //   dispatch(setTabIndex(0));
+              //   push("/dashboard");
+              // } else if (res && res.status !== 408) {
+              //   showToastError(res.message);
+              // }
               resetForm();
             }}
           >

@@ -23,7 +23,7 @@ import {
   where,
 } from "@firebase/firestore";
 import { ISignup, OnboardingProps } from "@/app/constants/types";
-import { showToastError } from "@/app/lib/toast";
+
 export const baseURL = `${process.env.NEXT_PUBLIC_CHIMONEY_URL}/v0.2`;
 
 // create chimoney sub-account
@@ -223,39 +223,45 @@ export const handleEmailAuth = async (
 ) => {
   try {
     dispatch(setIsLoading(true));
-    const res: any =
-      type === "signup"
-        ? await createUserWithEmailAndPassword(auth, data.email, data.password)
-        : await signInWithEmailAndPassword(auth, data.email, data.password);
+    let res: any;
+    let update: any;
+    let userAuthRes: any;
+    let userData: ISignup;
 
-    const update =
-      type === "signup" &&
-      (await updateProfile(res.user, { displayName: data.name }));
-
-    const userData = {
-      name: res?.user?.displayName as string,
-      email: res?.user?.email as string,
-      firstName: res?.user?.displayName.split(" ")[0],
-      lastName:
-        res?.user?.displayName.split(" ")[1] ??
-        res?.user?.displayName.split(" ")[0],
-      meta: {
-        userId: res?.user?.uid, //google uid
-        photo: res?.user?.photoURL ?? "",
-      },
-    };
-    const userAuthRes = await createAccount(userData);
-
-    if (!userAuthRes) {
-      throw new Error("Failed to create account");
+    if (type === "signup") {
+      res = await createUserWithEmailAndPassword(
+        auth,
+        data.email,
+        data.password
+      );
+      update = await updateProfile(res.user, { displayName: data.name });
+      userData = {
+        name: res?.user?.displayName as string,
+        email: res?.user?.email as string,
+        firstName: res?.user?.displayName.split(" ")[0],
+        lastName:
+          res?.user?.displayName.split(" ")[1] ??
+          res?.user?.displayName.split(" ")[0],
+        meta: {
+          userId: res?.user?.uid, //google uid
+          photo: res?.user?.photoURL ?? "",
+        },
+      };
+      userAuthRes = await createAccount(userData);
+      await handleFBUser({
+        ...userData,
+        accountId:
+          userAuthRes.status === "success" ? userAuthRes?.data?.id : "",
+      });
+      if (!userAuthRes) {
+        throw new Error("Failed to create account");
+      }
+    } else {
+      res = await signInWithEmailAndPassword(auth, data.email, data.password);
     }
 
-    await handleFBUser({
-      ...userData,
-      accountId: userAuthRes.status === "success" ? userAuthRes?.data?.id : "",
-    });
     const message =
-      userAuthRes.status === "error"
+      userAuthRes && userAuthRes.status === "error"
         ? `Welcome back, ${res?.user?.displayName}! your login was successful`
         : `${res?.user?.displayName}! your registration was successful. You will be redirected shortly`;
 
@@ -265,7 +271,7 @@ export const handleEmailAuth = async (
       message: message,
     };
   } catch (error: any) {
-    console.log(error.message, "aut error---");
+    console.log(error.message, "auth error---");
     let status: number;
     let message: string;
     dispatch(setIsLoading(false));
@@ -279,8 +285,11 @@ export const handleEmailAuth = async (
         message = "Invalid credentials (Email/password is incorrect)! 😞";
         break;
       case "Firebase: Error (auth/email-already-exists).":
-      case "Firebase: Error (auth/email-already-in-use).":
         status = 409;
+        message = "Email already exists, please try another email! 😞";
+        break;
+      case "Firebase: Error (auth/email-already-in-use).":
+        status = 408;
         message = "Email already exists, please try another email! 😞";
         break;
       default:
@@ -294,34 +303,87 @@ export const handleEmailAuth = async (
       message,
       error: error?.message,
     };
+  }
+};
 
-    // let status: number;
-    // let message: string;
-    // dispatch(setIsLoading(false));
-    // switch (error.message) {
-    //   case "Firebase: Error (auth/user-not-found).":
-    //     status = 400;
-    //     message ="Email does not exist in our Database. Please register 😞";
-    //     break;
-    //   case "Firebase: Error (auth/invalid-credential).":
-    //     status = 401;
-    //     message ="Invalid credentials (Email/password is incorrect)! 😞";
-    //     break;
-    //   case "Firebase: Error (auth/email-already-exists).":
-    //   case "Firebase: Error (auth/email-already-in-use).":
-    //     status = 403;
-    //     message ="Email already exist, please try another email! 😞";
-    //     break;
-    //   default:
-    //     status = 501;
-    //     message= "Oops, something went wrong! 😞",
-    //     break;
-    // }
+export const handleEmailRegister = async (
+  dispatch: Dispatch<any>,
+  data: OnboardingProps
+) => {
+  try {
+    dispatch(setIsLoading(true));
+    let userAuthRes: any;
 
-    // return {
-    //   status,
-    //   message,
-    //   error: error?.message,
-    // };
+    const res = await createUserWithEmailAndPassword(
+      auth,
+      data.email,
+      data.password
+    );
+
+    if (res && res?.user) {
+      const update = await updateProfile(res.user, { displayName: data.name });
+      const userData = {
+        name: res?.user?.displayName as string,
+        email: res?.user?.email as string,
+        firstName: data.name ? data?.name?.split(" ")[0] : "",
+        lastName: data.name ? data?.name?.split(" ")[1] : "",
+        meta: {
+          userId: res?.user?.uid, //google uid
+          photo: res?.user?.photoURL ?? "",
+        },
+      };
+      userAuthRes = await createAccount(userData);
+      await handleFBUser({
+        ...userData,
+        accountId:
+          userAuthRes.status === "success" ? userAuthRes?.data?.id : "",
+      });
+      if (!userAuthRes) {
+        throw new Error("Failed to create account");
+      }
+    }
+    const message =
+      userAuthRes && userAuthRes.status === "success"
+        ? `${data.name}! your registration was successful. You will be redirected shortly`
+        : "";
+
+    dispatch(setIsLoading(false));
+    return {
+      status: 200,
+      message: message,
+    };
+  } catch (error: any) {
+    console.log(error.message, "auth error---");
+    let status: number;
+    let message: string;
+    dispatch(setIsLoading(false));
+
+    switch (error.code) {
+      case "auth/email-already-in-use":
+        status = 409;
+        message = `${data.name}! your registration was successful. You will be redirected shortly`;
+        break;
+      case "auth/invalid-email":
+        status = 400;
+        message = "The email address is not valid. 😞";
+        break;
+      case "auth/operation-not-allowed":
+        status = 403;
+        message = "Email/password accounts are not enabled. 😞";
+        break;
+      case "auth/weak-password":
+        status = 422;
+        message = "The password is not strong enough. 😞";
+        break;
+      default:
+        status = 500;
+        message = "Oops, something went wrong! 😞";
+    }
+
+    return {
+      status,
+      message,
+      error: error?.message,
+    };
   }
 };
